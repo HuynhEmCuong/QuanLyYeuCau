@@ -40,4 +40,4 @@
 /Manager_Request.Data/bin
 /Manager_Request.Application/obj
 /Manager_Request.Application/bin
-
+*.vs
