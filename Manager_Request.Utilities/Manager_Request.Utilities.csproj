@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Manager_Request.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="20.1.0" />
     <PackageReference Include="Aspose.Words" Version="20.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
