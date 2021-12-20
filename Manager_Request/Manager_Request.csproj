@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Manager_Request.Application\Manager_Request.Application.csproj" />
     <ProjectReference Include="..\Manager_Request.Data.EF\Manager_Request.Data.EF.csproj" />
-    <ProjectReference Include="..\Manager_Request.Data\Manager_Request.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

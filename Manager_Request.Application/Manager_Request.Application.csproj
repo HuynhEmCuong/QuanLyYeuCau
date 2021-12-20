@@ -15,4 +15,9 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Manager_Request.Data.EF\Manager_Request.Data.EF.csproj" />
+    <ProjectReference Include="..\Manager_Request.Utilities\Manager_Request.Utilities.csproj" />
+  </ItemGroup>
+
 </Project>

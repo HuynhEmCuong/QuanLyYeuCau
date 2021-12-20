@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Manager_Request.Utilities\Manager_Request.Utilities.csproj" />
+  </ItemGroup>
+
 </Project>
