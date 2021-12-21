@@ -48,7 +48,8 @@ namespace Manager_Request
             app.UseAuthorization();
             app.UseAuthentication();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseRouting();
 
 
             app.UseSwagger(option => { option.RouteTemplate = swaggerOptions.JsonRoute; });

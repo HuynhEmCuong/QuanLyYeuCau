@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Manager_Request.Application.Services.Students;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Manager_Request.Installers
@@ -7,7 +8,7 @@ namespace Manager_Request.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-           
+            services.AddScoped<IStudentService, StudentService>();
         }
     }
 }
