@@ -19,6 +19,12 @@ namespace Manager_Request.Data.Entities
         [StringLength(10)]
         public string StudenId { get; set; }
 
+        [StringLength(11)]
+        public string Mobi { get; set; }
+
+        public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
+
         public virtual ICollection<TaskList> TaskLists { get; set; }
 
     }

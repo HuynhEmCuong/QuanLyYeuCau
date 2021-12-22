@@ -15,6 +15,8 @@ namespace Manager_Request.Application.ViewModels
 
         public string StudenId { get; set; }
 
-        public virtual ICollection<TaskList> TaskLists { get; set; }
+        public string Mobi { get; set; }
+
+      
     }
 }

@@ -17,7 +17,7 @@ namespace Manager_Request.Application.Services.Students
 {
     public interface IStudentService : IBaseService<StudentViewModel>
     {
-        Task<OperationResult> CheckUserExist(string email);
+        Task<OperationResult> CheckUserExist(StudentViewModel model);
     }
 
     public class StudentService : BaseService<Student, StudentViewModel>, IStudentService
@@ -37,29 +37,21 @@ namespace Manager_Request.Application.Services.Students
             _configMapper = configMapper;
         }
 
-        public async Task<OperationResult> CheckUserExist(string email)
+        public async Task<OperationResult> CheckUserExist(StudentViewModel model)
         {
-            var checkItem = await _repository.FindSingleAsync(x => x.Email == email);
-
-            if (!checkItem.IsNull())
+            var item = await _repository.FindSingleAsync(x => x.Email == model.Email);
+            if (!item.IsNull())
             {
                 operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,
-                    Data = checkItem,
+                    Data = item,
                     Success =true
-
                 };
             }
             else
             {
-                operationResult = new OperationResult
-                {
-                    StatusCode = StatusCode.Ok,
-                    Success = false,
-                    Message="Không tìm thấy user nào"
-
-                };
+                operationResult = await AddAsync(model);
             }
             return operationResult;
         }

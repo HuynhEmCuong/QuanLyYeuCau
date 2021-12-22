@@ -9,11 +9,12 @@ namespace Manager_Request.Data.Entities
 {
    public class TaskList
     {
-        [Key]
-        public int Id { get; set; }
 
+
+        [Key]
         public int RequestId { get; set; }
 
+        [Key]
         public int StudentId { get; set; }
 
         public int? ReceiverId { get; set; }

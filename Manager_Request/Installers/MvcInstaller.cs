@@ -31,10 +31,9 @@ namespace Manager_Request.Installers
             // Config trả về nguyên mẫu JSON
             services.AddMvc(option => option.EnableEndpointRouting = false)
                     .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                    .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                    .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-                    //Sài form online thì bỏ dòng này
-                    .AddNewtonsoftJson(opt => opt.SerializerSettings.ContractResolver = new DefaultContractResolver());
+                   
 
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IMapper>(sp =>

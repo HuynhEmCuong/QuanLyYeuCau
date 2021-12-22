@@ -19,10 +19,15 @@ namespace Manager_Request.Controllers.Student
         }
 
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> CheckUserExist(StudentViewModel model) => Ok(await _service.CheckUserExist(model));
+
+
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> CheckUserExist(string email) => Ok(await _service.CheckUserExist(email));
-       
+        public async Task<ActionResult> GetAll() => Ok(await _service.GetAllAsync());
+
 
         [HttpPost]
         public async Task<IActionResult> AddStudent([FromBody] StudentViewModel model) => Ok(await _service.AddAsync(model));

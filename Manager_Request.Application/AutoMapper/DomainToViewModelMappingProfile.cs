@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Manager_Request.Application.ViewModels;
+using Manager_Request.Data.Entities;
 
 namespace Manager_Request.Application.AutoMapper
 {
@@ -6,7 +8,7 @@ namespace Manager_Request.Application.AutoMapper
     {
        public DomainToViewModelMappingProfile()
         {
-           
+            CreateMap<Student, StudentViewModel>();
         }
     }
 }
