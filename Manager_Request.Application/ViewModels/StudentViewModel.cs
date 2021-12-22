@@ -13,10 +13,13 @@ namespace Manager_Request.Application.ViewModels
 
         public string Email { get; set; }
 
-        public string StudenId { get; set; }
+        public string StudentId { get; set; }
 
         public string Mobi { get; set; }
 
-      
+        public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
+
+
     }
 }

@@ -26,7 +26,7 @@ namespace QLHB.Data.EF
         }
 
         public DbSet<Student> Students { get; set; }
-        public DbSet<TaskList> TaskLists { get; set; }
+        public DbSet<StudentTask> StudentTasks { get; set; }
         public DbSet<RequestType> RequestTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -45,7 +45,7 @@ namespace QLHB.Data.EF
 
 
 
-            builder.Entity<TaskList>().HasKey(x => new { x.RequestId, x.StudentId });
+            builder.Entity<StudentTask>().HasKey(x => new { x.RequestId, x.StudentId });
 
         }
 

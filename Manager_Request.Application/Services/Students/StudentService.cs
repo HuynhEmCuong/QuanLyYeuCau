@@ -39,7 +39,7 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<OperationResult> CheckUserExist(StudentViewModel model)
         {
-            var item = await _repository.FindSingleAsync(x => x.Email == model.Email);
+            var item = await _repository.FindAll(x => x.Email == model.Email).Include(x => x.TaskLists).FirstOrDefaultAsync();
             if (!item.IsNull())
             {
                 operationResult = new OperationResult

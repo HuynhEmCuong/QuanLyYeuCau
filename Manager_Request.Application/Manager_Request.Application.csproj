@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Services\Students\StudentTaskService.cs~RFb308c57.TMP" />
+    <None Remove="ViewModels\StudentViewModel.cs~RFb3fdc33.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="DevExtreme.AspNet.Data" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />

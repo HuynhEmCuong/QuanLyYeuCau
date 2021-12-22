@@ -11,6 +11,8 @@ namespace Manager_Request.Installers
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IRepository<Student>, EFRepository<Student>>();
+            services.AddScoped<IRepository<StudentTask>, EFRepository<StudentTask>>();
+            services.AddScoped<IRepository<RequestType>, EFRepository<RequestType>>();
         }
     }
 }

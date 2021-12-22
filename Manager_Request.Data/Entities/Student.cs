@@ -17,7 +17,7 @@ namespace Manager_Request.Data.Entities
         public string Email { get; set; }
 
         [StringLength(10)]
-        public string StudenId { get; set; }
+        public string StudentId { get; set; }
 
         [StringLength(11)]
         public string Mobi { get; set; }
@@ -25,7 +25,7 @@ namespace Manager_Request.Data.Entities
         public DateTime? CreateDate { get; set; }
         public DateTime? ModifyDate { get; set; }
 
-        public virtual ICollection<TaskList> TaskLists { get; set; }
+        public virtual ICollection<StudentTask> TaskLists { get; set; }
 
     }
 }
