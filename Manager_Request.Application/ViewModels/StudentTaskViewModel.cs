@@ -1,7 +1,9 @@
 ﻿using Manager_Request.Data.Entities;
+using Manager_Request.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Manager_Request.Application.ViewModels
 {
@@ -14,17 +16,14 @@ namespace Manager_Request.Application.ViewModels
 
         public int? ReceiverId { get; set; }
 
+        public RequestStatus Status { get; set; }
+
         public string Note { get; set; }
         public DateTime Finish_date { get; set; }
 
-        public DateTime Received_date { get; set; }
+        public DateTime? CreateDate { get; set; }
 
-
-        public DateTime Modify_Date { get; set; }
-
-        public int? ModifyBy { get; set; }
-
-        public virtual AppUser User { get; set; }
+        public DateTime? AssignDate { get; set; }
 
         public virtual RequestType RequestType { get; set; }
 

@@ -21,7 +21,7 @@ namespace Manager_Request.Controllers.Student
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> CheckUserExist(StudentViewModel model) => Ok(await _service.CheckUserExist(model));
+        public async Task<ActionResult> CheckUserExist([FromBody] StudentViewModel model) => Ok(await _service.CheckUserExist(model));
 
 
         [HttpGet]
@@ -35,7 +35,7 @@ namespace Manager_Request.Controllers.Student
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateStuden([FromBody] StudentViewModel model) => Ok(await _service.UpdateAsync(model));
+        public async Task<IActionResult> UpdateStudent([FromBody] StudentViewModel model) => Ok(await _service.UpdateAsync(model));
 
 
     }

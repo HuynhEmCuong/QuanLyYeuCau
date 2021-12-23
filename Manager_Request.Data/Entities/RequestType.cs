@@ -19,5 +19,8 @@ namespace Manager_Request.Data.Entities
 
         public int SortOrder { get; set; }
 
+        public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
+
     }
 }

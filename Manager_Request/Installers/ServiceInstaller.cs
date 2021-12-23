@@ -9,6 +9,7 @@ namespace Manager_Request.Installers
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentTaskService, StudentTaskService>();
         }
     }
 }

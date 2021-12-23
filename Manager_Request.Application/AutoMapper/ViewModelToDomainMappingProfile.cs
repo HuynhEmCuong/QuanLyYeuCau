@@ -9,6 +9,7 @@ namespace Manager_Request.Application.AutoMapper
         public ViewModelToDomainMappingProfile()
         {
             CreateMap<StudentViewModel, Student>();
+            CreateMap<StudentTaskViewModel, StudentTask>();
 
         }
     }

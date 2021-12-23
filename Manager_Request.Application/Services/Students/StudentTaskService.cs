@@ -3,6 +3,7 @@ using Manager_Request.Application.Service;
 using Manager_Request.Application.ViewModels;
 using Manager_Request.Data.EF.Interface;
 using Manager_Request.Data.Entities;
+using Manager_Request.Data.Enums;
 using Manager_Request.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
@@ -31,11 +32,6 @@ namespace Manager_Request.Application.Services.Students
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configMapper = configMapper;
-        }
-
-        public override Task<OperationResult> AddAsync(StudentTaskViewModel model)
-        {
-            return base.AddAsync(model);
         }
     }
 }

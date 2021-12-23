@@ -9,8 +9,6 @@ namespace Manager_Request.Data.Entities
 {
    public class StudentTask
     {
-
-
         [Key]
         public int RequestId { get; set; }
 
@@ -21,18 +19,14 @@ namespace Manager_Request.Data.Entities
 
         [StringLength(255)]
         public string Note { get; set; }
-        public DateTime Finish_date { get; set; }
 
-        public DateTime Received_date { get; set; }
+        public RequestStatus Status { get; set; }
 
-        public TaskStatus Status { get; set; }
+        public DateTime? Finish_date { get; set; }
 
-        public DateTime Modify_Date { get; set; }
+        public DateTime? CreateDate { get; set; }
 
-        public int? ModifyBy { get; set; }
-
-        [ForeignKey(nameof(ModifyBy))]
-        public virtual AppUser User { get; set; }
+        public DateTime? AssignDate { get; set; }
 
         [ForeignKey(nameof(RequestId))]
         public virtual RequestType RequestType { get; set; }

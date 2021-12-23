@@ -3,6 +3,7 @@ using Manager_Request.Data.Enums;
 using Microsoft.AspNetCore.Identity;
 using QLHB.Data.EF;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,6 +53,32 @@ namespace Manager_Request.Data.EF
                 await _context.SaveChangesAsync();
 
             }
+
+
+            if (!_context.RequestTypes.Any())
+            {
+                List<RequestType> requestTypes = new List<RequestType>();
+
+                requestTypes.Add(new RequestType
+                {
+                    Name ="Gửi bảng điểm",
+                    Description ="Danh sách bản điểm các học kì",
+                    SortOrder=1,
+                    Status=Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận học tại trường",
+                    Description = "Xác nhận đang học và làm việc tại trường",
+                    SortOrder = 2,
+                    Status = Status.Active
+                });
+
+                _context.RequestTypes.AddRange(requestTypes);
+                _context.SaveChanges();
+            }
+
+            
             
         }
     }
