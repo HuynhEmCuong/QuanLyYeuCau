@@ -1,18 +1,17 @@
 ﻿using Manager_Request.Data.Enums;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Manager_Request.Data.Entities
 {
-   public class StudentTask
+    public class StudentTask
     {
         [Key]
+        public int Id{ get; set; }
+        
         public int RequestId { get; set; }
 
-        [Key]
         public int StudentId { get; set; }
 
         public int? ReceiverId { get; set; }
@@ -20,13 +19,16 @@ namespace Manager_Request.Data.Entities
         [StringLength(255)]
         public string Note { get; set; }
 
-        public RequestStatus Status { get; set; }
+        public int Quantity { get; set; }
+        public DateTime? FinishDate { get; set; }
 
-        public DateTime? Finish_date { get; set; }
+        public DateTime? AssignDate { get; set; }
+
+        public RequestStatus Status { get; set; }
 
         public DateTime? CreateDate { get; set; }
 
-        public DateTime? AssignDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
 
         [ForeignKey(nameof(RequestId))]
         public virtual RequestType RequestType { get; set; }

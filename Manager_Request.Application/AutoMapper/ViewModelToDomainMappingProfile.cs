@@ -10,6 +10,7 @@ namespace Manager_Request.Application.AutoMapper
         {
             CreateMap<StudentViewModel, Student>();
             CreateMap<StudentTaskViewModel, StudentTask>();
+            
 
         }
     }

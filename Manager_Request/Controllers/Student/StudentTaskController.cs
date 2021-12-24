@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Manager_Request.Controllers.Student
 {
-    public class StudentTaskController :BaseApiController
+    public class StudentTaskController : BaseApiController
     {
         private IStudentTaskService _service;
 
@@ -22,5 +22,12 @@ namespace Manager_Request.Controllers.Student
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> AddUserTask([FromBody] StudentTaskViewModel data) => Ok(await _service.AddAsync(data));
+
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllByStudentId(int id) => Ok(await _service.GetListTaskByStudentId(id));
+
     }
 }

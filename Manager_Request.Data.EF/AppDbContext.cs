@@ -45,7 +45,7 @@ namespace QLHB.Data.EF
 
 
 
-            builder.Entity<StudentTask>().HasKey(x => new { x.RequestId, x.StudentId });
+            //builder.Entity<StudentTask>().HasKey(x => new { x.RequestId, x.StudentId });
 
         }
 

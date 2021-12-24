@@ -9,6 +9,7 @@ namespace Manager_Request.Application.ViewModels
 {
    public class StudentTaskViewModel
     {
+        public int Id { get; set; }
 
         public int RequestId { get; set; }
 
@@ -16,14 +17,19 @@ namespace Manager_Request.Application.ViewModels
 
         public int? ReceiverId { get; set; }
 
-        public RequestStatus Status { get; set; }
-
         public string Note { get; set; }
-        public DateTime Finish_date { get; set; }
+
+        public int Quantity { get; set; }
+
+        public DateTime? FinishDate { get; set; }
+
+        public DateTime? AssignDate { get; set; }
+
+        public RequestStatus Status { get; set; }
 
         public DateTime? CreateDate { get; set; }
 
-        public DateTime? AssignDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
 
         public virtual RequestType RequestType { get; set; }
 

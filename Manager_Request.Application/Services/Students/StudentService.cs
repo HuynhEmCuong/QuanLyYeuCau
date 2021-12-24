@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Manager_Request.Application.Const;
+using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
 using Manager_Request.Application.ViewModels;
 using Manager_Request.Data.EF.Interface;
@@ -8,9 +9,6 @@ using Manager_Request.Ultilities;
 using Manager_Request.Utilities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Manager_Request.Application.Services.Students
@@ -39,14 +37,14 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<OperationResult> CheckUserExist(StudentViewModel model)
         {
-            var item = await _repository.FindAll(x => x.Email == model.Email).Include(x => x.TaskLists).FirstOrDefaultAsync();
+            var item = await _repository.FindAll(x => x.Email == model.Email).FirstOrDefaultAsync();
             if (!item.IsNull())
             {
                 operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,
                     Data = item,
-                    Success =true
+                    Success = true
                 };
             }
             else
@@ -55,5 +53,6 @@ namespace Manager_Request.Application.Services.Students
             }
             return operationResult;
         }
+
     }
 }
