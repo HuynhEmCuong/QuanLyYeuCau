@@ -61,18 +61,117 @@ namespace Manager_Request.Data.EF
 
                 requestTypes.Add(new RequestType
                 {
-                    Name ="Gửi bảng điểm",
-                    Description ="Danh sách bản điểm các học kì",
+                    Name = "Giấy xác nhận SV: Tạm hoãn nghĩa vụ quân sự",
+                    Description = "GXNSV-Tạm hoãn nghĩa vụ quân sự",
                     SortOrder=1,
                     Status=Status.Active
                 });
                 requestTypes.Add(new RequestType
                 {
-                    Name = "Giấy xác nhận học tại trường",
-                    Description = "Xác nhận đang học và làm việc tại trường",
+                    Name = "Giấy xác nhận SV: Vay vốn sinh viên tại ngân hàng chính sách xã hội",
+                    Description = "GXNSV-Vay vốn sinh viên tại ngân hàng chính sách xã hội",
                     SortOrder = 2,
                     Status = Status.Active
                 });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Sổ ưu đãi giáo dục, đào tạo",
+                    Description = "GXNSV Sổ ưu đãi giáo dục, đào tạo",
+                    SortOrder = 3,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Giảm trừ gia cảnh",
+                    Description = "GXNSV-Giảm trừ gia cảnh",
+                    SortOrder = 4,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Tham gia hội đồng hương",
+                    Description = "GXNSV-Tham gia hội đồng hương",
+                    SortOrder = 5,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Tham gia giao lưu văn hóa",
+                    Description = "GXNSV-Tham gia giao lưu văn hóa",
+                    SortOrder = 6,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Hỗ trợ chi phí học tập tại địa phương",
+                    Description = "GXNSV-Hỗ trợ chi phí học tập tại địa phương",
+                    SortOrder = 7,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Cấp bù tiền miễn, giảm học phí",
+                    Description = "GXNSV-Cấp bù tiền miễn, giảm học phí",
+                    SortOrder = 8,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Xét học bổng du học",
+                    Description = "GXNSV-Xét học bổng du học",
+                    SortOrder = 9,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Làm visa đi du học, du lịch",
+                    Description = "GXNSV-Làm visa đi du học, du lịch",
+                    SortOrder = 10,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Tham gia CLB thể dục, thể thao",
+                    Description = "GXNSV-Tham gia CLB thể dục, thể thao",
+                    SortOrder = 11,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận SV: Nhận phần thưởng",
+                    Description = "GXNSV-Nhận phần thưởng",
+                    SortOrder = 12,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Bảng điểm",
+                    Description = "Bảng điểm",
+                    SortOrder = 13,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy chứng nhận tốt nghiệp tạm thời",
+                    Description = "Giấy chứng nhận tốt nghiệp tạm thời",
+                    SortOrder = 14,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Giấy xác nhận hoàn thành chương trình đào tạo",
+                    Description = "Giấy chứng nhận tốt nghiệp tạm thời",
+                    SortOrder = 15,
+                    Status = Status.Active
+                });
+                requestTypes.Add(new RequestType
+                {
+                    Name = "Khác",
+                    Description = "Khác",
+                    SortOrder = 16,
+                    Status = Status.Active
+                });
+
 
                 _context.RequestTypes.AddRange(requestTypes);
                 _context.SaveChanges();

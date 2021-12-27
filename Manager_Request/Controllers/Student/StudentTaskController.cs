@@ -29,5 +29,9 @@ namespace Manager_Request.Controllers.Student
         [AllowAnonymous]
         public async Task<IActionResult> GetAllByStudentId(int id) => Ok(await _service.GetListTaskByStudentId(id));
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> DeleteTask(int id) => Ok(await _service.DeleteAsync(id));
+
     }
 }
