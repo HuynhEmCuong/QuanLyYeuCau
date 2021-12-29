@@ -25,7 +25,6 @@ namespace Manager_Request.Controllers.Student
 
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
 

@@ -45,8 +45,7 @@ namespace Manager_Request
              .AllowAnyMethod()
              .AllowAnyOrigin());
 
-            app.UseAuthorization();
-            app.UseAuthentication();
+
 
             //app.UseHttpsRedirection();
             app.UseRouting();
@@ -59,6 +58,10 @@ namespace Manager_Request
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {

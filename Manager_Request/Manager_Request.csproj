@@ -24,9 +24,5 @@
     <ProjectReference Include="..\Manager_Request.Data.EF\Manager_Request.Data.EF.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\System\" />
-  </ItemGroup>
-
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Manager_Request.Application.ViewModels;
+using Manager_Request.Application.ViewModels.System;
 using Manager_Request.Data.Entities;
 
 namespace Manager_Request.Application.AutoMapper
@@ -11,6 +12,7 @@ namespace Manager_Request.Application.AutoMapper
             CreateMap<Student, StudentViewModel>();
             CreateMap<StudentTask, StudentTaskViewModel>();
             CreateMap<RequestType, RequestTypeViewModel>();
+            CreateMap<AppUser, AppUserViewModel>();
         }
     }
 }
