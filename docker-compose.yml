@@ -1,0 +1,21 @@
+version: '3'
+
+#NETWORK
+networks:
+   web-net:
+    external: true
+
+#SERVICES
+services:
+  manager-request:
+    hostname: manager-request
+    container_name: manager-request
+    image: huynhcuongem75/manager-request
+    build: 
+        context: ./
+        dockerfile: ./Manager_Request/Dockerfile
+    restart: always
+    networks:
+      - web-net
+    ports:
+      - 1997:80

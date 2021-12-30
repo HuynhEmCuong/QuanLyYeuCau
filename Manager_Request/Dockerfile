@@ -8,6 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["Manager_Request/Manager_Request.csproj", "Manager_Request/"]
+COPY ["Manager_Request.Application/Manager_Request.Application.csproj", "Manager_Request/"]
+COPY ["Manager_Request.Data/Manager_Request.Data.csproj", "Manager_Request/"]
+COPY ["Manager_Request.Data.EF/Manager_Request.Data.EF.csproj", "Manager_Request/"]
+COPY ["Manager_Request.Utilities/Manager_Request.Utilities.csproj", "Manager_Request/"]
 RUN dotnet restore "Manager_Request/Manager_Request.csproj"
 COPY . .
 WORKDIR "/src/Manager_Request"
