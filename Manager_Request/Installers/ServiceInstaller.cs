@@ -1,4 +1,5 @@
-﻿using Manager_Request.Application.Services.Request;
+﻿using Manager_Request.Application.Inplementation;
+using Manager_Request.Application.Services.Request;
 using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.Services.System;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,8 @@ namespace Manager_Request.Installers
             services.AddScoped<IStudentTaskService, StudentTaskService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
         }
     }
 }

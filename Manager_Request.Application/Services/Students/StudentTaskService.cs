@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
+using Manager_Request.Application.Configuration;
 using Manager_Request.Application.Service;
 using Manager_Request.Application.ViewModels;
 using Manager_Request.Data.EF.Interface;
@@ -17,6 +20,7 @@ namespace Manager_Request.Application.Services.Students
     public interface IStudentTaskService : IBaseService<StudentTaskViewModel>
     {
         Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId);
+
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
     {
@@ -39,7 +43,15 @@ namespace Manager_Request.Application.Services.Students
         public async Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId)
         {
             var query = await _repository.FindAll(x => x.StudentId == studentId).Include(x => x.Student).Include(x => x.RequestType).OrderByDescending(x => x.CreateDate).AsNoTracking().ToListAsync();
-           return _mapper.Map<List<StudentTaskViewModel>>(query);
+            return _mapper.Map<List<StudentTaskViewModel>>(query);
         }
+
+        public override async Task<LoadResult> LoadDxoGridAsync(DataSourceLoadOptions loadOptions)
+        {
+            var query = _repository.FindAll().Include(x => x.Student).Include(x => x.RequestType).Include(x => x.AppUser);
+            return await DataSourceLoader.LoadAsync(query, loadOptions);
+        }
+
+
     }
 }

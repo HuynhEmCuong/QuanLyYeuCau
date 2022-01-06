@@ -1,4 +1,5 @@
-﻿using Manager_Request.Application.Services.Students;
+﻿using Manager_Request.Application.Configuration;
+using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,19 @@ namespace Manager_Request.Controllers.Student
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteTask(int id) => Ok(await _service.DeleteAsync(id));
+
+
+        [HttpGet]
+        public async Task<ActionResult> LoadDxoGridAsync(DataSourceLoadOptions loadOptions)
+        {
+            return Ok(await _service.LoadDxoGridAsync(loadOptions));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> LoadDxoLookupAsync(DataSourceLoadOptions loadOptions)
+        {
+            return Ok(await _service.LoadDxoLookupAsync(loadOptions));
+        }
 
     }
 }

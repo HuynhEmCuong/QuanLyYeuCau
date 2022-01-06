@@ -3,6 +3,7 @@ using Manager_Request.Application.Const;
 using Manager_Request.Application.Dtos;
 using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
+using Manager_Request.Ultilities;
 using Manager_Request.Utilities.Constants;
 using Manager_Request.Utilities.Dtos;
 using Microsoft.AspNetCore.Identity;
@@ -103,7 +104,7 @@ namespace Manager_Request.Application.Services.System
         {
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false,false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
@@ -159,6 +160,7 @@ namespace Manager_Request.Application.Services.System
                             new Claim("id", user.Id.ToString()),
                             new Claim("name", user.Name),
                             new Claim("phonenumber", user.PhoneNumber??string.Empty),
+                            new Claim("roles",roles.ToJsonString()),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                         };
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);

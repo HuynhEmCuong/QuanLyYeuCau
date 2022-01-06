@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Manager_Request.Controllers.System
 {
-    public class AuthController: BaseApiController
+    public class AuthenController: BaseApiController
     {
         private IAuthService _service;
 
-        public AuthController(IAuthService service)
+        public AuthenController(IAuthService service)
         {
             _service = service;
         }
@@ -23,6 +23,18 @@ namespace Manager_Request.Controllers.System
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
             return StatusCodeResult(await _service.LoginAsync(model));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPasswordAsync(int id)
+        {
+            return StatusCodeResult(await _service.ResetPasswordAsync(id));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePasswordAsync(int id, string password)
+        {
+            return StatusCodeResult(await _service.ChangePasswordAsync(id, password));
         }
     }
 }
