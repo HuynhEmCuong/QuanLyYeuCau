@@ -25,7 +25,6 @@ namespace Manager_Request.Controllers.Student
         public async Task<IActionResult> AddUserTask([FromBody] StudentTaskViewModel data) => Ok(await _service.AddAsync(data));
 
 
-
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllByStudentId(int id) => Ok(await _service.GetListTaskByStudentId(id));
@@ -46,6 +45,22 @@ namespace Manager_Request.Controllers.Student
         {
             return Ok(await _service.LoadDxoLookupAsync(loadOptions));
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> FindByIdIncludeAsync(int id)
+        {
+            return Ok(await _service.GetTaskInclude(id));
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateAsync([FromBody] StudentTaskViewModel data)
+        {
+            return Ok(await _service.UpdateAsync(data));
+        }
+
 
     }
 }

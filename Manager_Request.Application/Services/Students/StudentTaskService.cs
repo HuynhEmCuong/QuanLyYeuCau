@@ -2,6 +2,8 @@
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Manager_Request.Application.Configuration;
+using Manager_Request.Application.Const;
+using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
 using Manager_Request.Application.ViewModels;
 using Manager_Request.Data.EF.Interface;
@@ -20,6 +22,8 @@ namespace Manager_Request.Application.Services.Students
     public interface IStudentTaskService : IBaseService<StudentTaskViewModel>
     {
         Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId);
+
+        Task<StudentTaskViewModel> GetTaskInclude(int id);
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -46,6 +50,12 @@ namespace Manager_Request.Application.Services.Students
             return _mapper.Map<List<StudentTaskViewModel>>(query);
         }
 
+        public async Task<StudentTaskViewModel> GetTaskInclude(int id)
+        {
+            var query = await _repository.FindAll(x => x.Id == id).Include(x => x.AppUser).Include(x => x.RequestType).Include(x => x.Student).FirstOrDefaultAsync();
+            return _mapper.Map<StudentTaskViewModel>(query);
+        }
+
         public override async Task<LoadResult> LoadDxoGridAsync(DataSourceLoadOptions loadOptions)
         {
             var query = _repository.FindAll().Include(x => x.Student).Include(x => x.RequestType).Include(x => x.AppUser);
@@ -53,5 +63,33 @@ namespace Manager_Request.Application.Services.Students
         }
 
 
+        public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
+        {
+            //Status ==2 
+            if (model.Status == RequestStatus.Doing)
+                model.AssignDate = DateTime.Now;
+            else
+                model.FinishDate = DateTime.Now;
+
+            var item = _mapper.Map<StudentTask>(model);
+            try
+            {
+                _repository.Update(item);
+                await _unitOfWork.SaveChangeAsync();
+
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Message = MessageReponse.UpdateSuccess,
+                    Success = true,
+                    Data = item
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
     }
 }
