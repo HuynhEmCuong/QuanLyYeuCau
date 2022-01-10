@@ -1,6 +1,7 @@
 ﻿using Manager_Request.Application.Configuration;
 using Manager_Request.Application.Const;
 using Manager_Request.Application.Dtos;
+using Manager_Request.Application.Extensions;
 using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
 using Manager_Request.Ultilities;
@@ -122,16 +123,20 @@ namespace Manager_Request.Application.Services.System
                         operationResult = await GenerateOperationResultForUserAsync(user, model.Password);
                     }
                 }
+                else
+                {
+                    operationResult = new OperationResult
+                    {
+                        StatusCode = StatusCode.BadRequest,
+                        Message = "Tài khoản không được tìm thấy! Vui lòng kiểm tra lại",
+                        Success = false
+                    };
+                }
             }
             catch (Exception ex)
             {
 
-                operationResult = new OperationResult
-                {
-                    StatusCode = StatusCode.BadRequest,
-                    Message = "Lỗi hệ thống",
-                    Success = false
-                };
+                operationResult = ex.GetMessageError();
             }
             return operationResult;
 

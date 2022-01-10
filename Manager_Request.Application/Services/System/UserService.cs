@@ -28,6 +28,8 @@ namespace Manager_Request.Application.Services.System
     {
         Task<OperationResult> ValidateAsync(AppUserViewModel model);
         Task<AppUserViewModel> FindUserByNameAsync(string username);
+
+        Task<AppUserViewModel> FindUserNotRole(object id);
     }
     public class UserService : IUserService
     {
@@ -221,6 +223,11 @@ namespace Manager_Request.Application.Services.System
             var user = await _userManager.FindByNameAsync(username);
 
             return _mapper.Map<AppUserViewModel>(user);
+        }
+
+        public Task<AppUserViewModel> FindUserNotRole(object id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

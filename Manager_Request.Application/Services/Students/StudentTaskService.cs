@@ -5,11 +5,14 @@ using Manager_Request.Application.Configuration;
 using Manager_Request.Application.Const;
 using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
+using Manager_Request.Application.Services.System;
 using Manager_Request.Application.ViewModels;
+using Manager_Request.Application.ViewModels.System;
 using Manager_Request.Data.EF.Interface;
 using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
 using Manager_Request.Utilities.Dtos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,15 +36,18 @@ namespace Manager_Request.Application.Services.Students
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly MapperConfiguration _configMapper;
+        private readonly UserManager<AppUser> _userManager;
         private OperationResult operationResult;
 
-        public StudentTaskService(IRepository<StudentTask> repository, IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper)
+        public StudentTaskService(IRepository<StudentTask> repository, IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper,
+            UserManager<AppUser> userManager)
             : base(repository, unitOfWork, mapper, configMapper)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configMapper = configMapper;
+            _userManager = userManager;
         }
 
         public async Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId)
@@ -72,11 +78,15 @@ namespace Manager_Request.Application.Services.Students
                 model.FinishDate = DateTime.Now;
 
             var item = _mapper.Map<StudentTask>(model);
+
+
             try
             {
                 _repository.Update(item);
                 await _unitOfWork.SaveChangeAsync();
 
+
+                item.AppUser = await GetUser(item.ReceiverId.ToString());
                 operationResult = new OperationResult()
                 {
                     StatusCode = StatusCode.Ok,
@@ -91,5 +101,14 @@ namespace Manager_Request.Application.Services.Students
             }
             return operationResult;
         }
+
+
+        private async Task<AppUser> GetUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            user.PasswordHash = string.Empty;
+            return user;
+        }
+
     }
 }

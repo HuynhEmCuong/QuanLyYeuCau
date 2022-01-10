@@ -54,7 +54,7 @@ namespace Manager_Request.Controllers.Student
         }
 
 
-        [HttpPost]
+        [HttpPut]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateAsync([FromBody] StudentTaskViewModel data)
         {

@@ -28,6 +28,12 @@ namespace Manager_Request.Data.Entities
 
         public DateTime? CreateDate { get; set; }
 
+        [StringLength(200)]
+        public string FileName { get; set; }
+
+        [StringLength(200)]
+        public string FilePath { get; set; }
+
         public DateTime? ModifyDate { get; set; }
 
         [ForeignKey(nameof(RequestId))]

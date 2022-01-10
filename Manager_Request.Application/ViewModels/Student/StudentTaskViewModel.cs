@@ -1,4 +1,5 @@
-﻿using Manager_Request.Data.Entities;
+﻿using Manager_Request.Application.ViewModels.System;
+using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
 using System;
 using System.Collections.Generic;
@@ -27,14 +28,18 @@ namespace Manager_Request.Application.ViewModels
 
         public RequestStatus Status { get; set; }
 
+        public string FileName { get; set; }
+
+        public string FilePath { get; set; }
+
         public DateTime? CreateDate { get; set; }
 
         public DateTime? ModifyDate { get; set; }
 
-        public virtual RequestType RequestType { get; set; }
+        public virtual RequestTypeViewModel RequestType { get; set; }
 
-        public virtual Student Student { get; set; }
+        public virtual StudentViewModel Student { get; set; }
 
-        public virtual AppUser AppUser { get; set; }
+        public virtual AppUserViewModel AppUser { get; set; }
     }
 }
