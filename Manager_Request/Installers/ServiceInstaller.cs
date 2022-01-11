@@ -1,4 +1,5 @@
 ﻿using Manager_Request.Application.Inplementation;
+using Manager_Request.Application.Service.SystemService;
 using Manager_Request.Application.Services.Request;
 using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.Services.System;
@@ -17,6 +18,7 @@ namespace Manager_Request.Installers
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IFileService, FileService>();
         }
     }
 }

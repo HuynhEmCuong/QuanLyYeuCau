@@ -26,6 +26,7 @@ namespace Manager_Request.Controllers.System
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPasswordAsync(int id)
         {
             return StatusCodeResult(await _service.ResetPasswordAsync(id));
