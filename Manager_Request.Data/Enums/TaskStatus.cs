@@ -8,6 +8,7 @@ namespace Manager_Request.Data.Enums
     {
         Received =1,
         Doing,
-        Complete
+        Complete,
+        Disabled
     }
 }
