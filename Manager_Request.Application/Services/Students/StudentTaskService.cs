@@ -7,6 +7,7 @@ using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
 using Manager_Request.Application.Services.System;
 using Manager_Request.Application.ViewModels;
+using Manager_Request.Application.ViewModels.Student;
 using Manager_Request.Application.ViewModels.System;
 using Manager_Request.Data.EF.Interface;
 using Manager_Request.Data.Entities;
@@ -27,6 +28,8 @@ namespace Manager_Request.Application.Services.Students
         Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId);
 
         Task<StudentTaskViewModel> GetTaskInclude(int id);
+
+        Task<StudentTaskReportViewModel> ReportTask();
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -68,6 +71,22 @@ namespace Manager_Request.Application.Services.Students
             return await DataSourceLoader.LoadAsync(query, loadOptions);
         }
 
+        public async Task<StudentTaskReportViewModel> ReportTask()
+        {
+            var query = _repository.FindAll();
+
+            DateTime startDateTime = DateTime.Today; //Today at 00:00:00
+            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
+
+            StudentTaskReportViewModel data = new StudentTaskReportViewModel();
+            data.Received = await query.CountAsync(x => x.Status == RequestStatus.Received);
+            data.ReceivedInDay = await query.Where(x => x.CreateDate >= startDateTime && x.CreateDate <=endDateTime).CountAsync(x => x.Status == RequestStatus.Received);
+            data.Doing = await query.CountAsync(x => x.Status == RequestStatus.Doing);
+            data.Complete= await query.CountAsync(x => x.Status == RequestStatus.Complete);
+            data.Disbaled = await query.CountAsync(x => x.Status == RequestStatus.Disabled);
+
+            return data;
+        }
 
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {

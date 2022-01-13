@@ -61,6 +61,13 @@ namespace Manager_Request.Controllers.Student
             return Ok(await _service.UpdateAsync(data));
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReportTask()
+        {
+            return Ok(await _service.ReportTask());
+        }
+
 
     }
 }
