@@ -26,6 +26,9 @@ namespace QLHB.Data.EF
         }
 
         public DbSet<Student> Students { get; set; }
+
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<EmailLog> EmailLogs{ get; set; }
         public DbSet<StudentTask> StudentTasks { get; set; }
         public DbSet<RequestType> RequestTypes { get; set; }
 

@@ -15,6 +15,8 @@ namespace Manager_Request.Application.ViewModels
 
         public string StudentId { get; set; }
 
+        public int? DepartId { get; set; }
+
         public string Mobi { get; set; }
 
         public DateTime? CreateDate { get; set; }

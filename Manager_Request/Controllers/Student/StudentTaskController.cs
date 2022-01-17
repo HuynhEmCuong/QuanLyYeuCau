@@ -47,7 +47,6 @@ namespace Manager_Request.Controllers.Student
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> FindByIdIncludeAsync(int id)
         {
             return Ok(await _service.GetTaskInclude(id));
@@ -55,14 +54,12 @@ namespace Manager_Request.Controllers.Student
 
 
         [HttpPut]
-        [AllowAnonymous]
         public async Task<IActionResult> UpdateAsync([FromBody] StudentTaskViewModel data)
         {
             return Ok(await _service.UpdateAsync(data));
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> ReportTask()
         {
             return Ok(await _service.ReportTask());

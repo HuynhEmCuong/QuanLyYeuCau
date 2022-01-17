@@ -13,6 +13,7 @@ namespace Manager_Request.Installers
             services.AddScoped<IRepository<Student>, EFRepository<Student>>();
             services.AddScoped<IRepository<StudentTask>, EFRepository<StudentTask>>();
             services.AddScoped<IRepository<RequestType>, EFRepository<RequestType>>();
+            services.AddScoped<IRepository<Department>, EFRepository<Department>>();
         }
     }
 }

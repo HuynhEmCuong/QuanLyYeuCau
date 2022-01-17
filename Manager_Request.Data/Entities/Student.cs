@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Manager_Request.Data.Entities
@@ -25,11 +26,17 @@ namespace Manager_Request.Data.Entities
 
         public Status Status { get; set; }
 
+        public int?  DepartId { get; set; }
+
         public DateTime? CreateDate { get; set; }
 
         public DateTime? ModifyDate { get; set; }
 
         public virtual ICollection<StudentTask> TaskLists { get; set; }
+
+        [ForeignKey(nameof(DepartId))]
+        public virtual Department Department { get; set; }
+
 
     }
 }
