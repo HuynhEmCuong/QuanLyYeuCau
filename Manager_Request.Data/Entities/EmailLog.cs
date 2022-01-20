@@ -9,7 +9,7 @@ namespace Manager_Request.Data.Entities
 {
     public class EmailLog
     {
-        public int  Id { get; set; }
+        public int Id { get; set; }
 
         [StringLength(255)]
         public string Subject { get; set; }
@@ -19,7 +19,10 @@ namespace Manager_Request.Data.Entities
 
         public string Receiver { get; set; }
 
-        public TypeEmail Type{ get; set; }
+        public string Error { get; set; }
+
+
+        public EmailStatus Status { get; set; }
 
         public DateTime CreateDate { get; set; }
 

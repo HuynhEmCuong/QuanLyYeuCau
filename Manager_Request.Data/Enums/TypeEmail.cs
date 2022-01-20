@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Manager_Request.Data.Enums
 {
-    public enum Status
+
+    public enum EmailStatus
     {
-        Active =1,
-        DeActive
-        
+        unsend,
+        send
     }
 }

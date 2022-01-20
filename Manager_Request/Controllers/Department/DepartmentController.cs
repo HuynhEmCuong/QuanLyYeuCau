@@ -1,5 +1,7 @@
-﻿using Manager_Request.Application.Services.DepartService;
+﻿using Manager_Request.Application.Configuration;
+using Manager_Request.Application.Services.DepartService;
 using Manager_Request.Application.ViewModels.Department;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace Manager_Request.Controllers.Department
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllAsync()
         {
             return Ok(await _service.GetAllAsync());
@@ -41,6 +44,17 @@ namespace Manager_Request.Controllers.Department
             return Ok(await _service.DeleteAsync(model));
         }
 
+        [HttpGet]
+        public async Task<ActionResult> LoadDxoGridAsync(DataSourceLoadOptions loadOptions)
+        {
+            return Ok(await _service.LoadDxoGridAsync(loadOptions));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> LoadDxoLookupAsync(DataSourceLoadOptions loadOptions)
+        {
+            return Ok(await _service.LoadDxoLookupAsync(loadOptions));
+        }
 
     }
 }

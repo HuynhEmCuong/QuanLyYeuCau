@@ -183,12 +183,22 @@ namespace Manager_Request.Application.Services.System
 
         public async Task<AppUserViewModel> FindByIdAsync(object id)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            var roles = await _userManager.GetRolesAsync(user);
-            var model = _mapper.Map<AppUser, AppUserViewModel>(user);
-            model.PasswordHash = string.Empty;
-            model.Roles = roles.ToList();
-            return model;
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id.ToString());
+                var roles = await _userManager.GetRolesAsync(user);
+                var model = _mapper.Map<AppUser, AppUserViewModel>(user);
+                model.PasswordHash = string.Empty;
+                model.Roles = roles.ToList();
+                return model;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
+            
         }
 
         public async Task<List<AppUserViewModel>> GetAllAsync()

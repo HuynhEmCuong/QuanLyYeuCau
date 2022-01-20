@@ -18,6 +18,10 @@ namespace Manager_Request.Installers
             var jwtSettings = new JwtSettings();
             configuration.Bind(nameof(jwtSettings), jwtSettings);
             services.AddSingleton(jwtSettings);
+
+            var mailOptions = new MailOptions();
+            configuration.Bind(nameof(mailOptions), mailOptions);
+            services.AddSingleton(mailOptions);
             //var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
 
             var tokenValidationParameters = new TokenValidationParameters
