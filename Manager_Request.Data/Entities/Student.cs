@@ -37,6 +37,5 @@ namespace Manager_Request.Data.Entities
         [ForeignKey(nameof(DepartId))]
         public virtual Department Department { get; set; }
 
-
     }
 }

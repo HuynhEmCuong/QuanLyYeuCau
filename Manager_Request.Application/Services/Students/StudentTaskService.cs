@@ -135,7 +135,7 @@ namespace Manager_Request.Application.Services.Students
         public async override Task<OperationResult> AddAsync(StudentTaskViewModel model)
         {
             var item = _mapper.Map<StudentTask>(model);
-           await SendMailAdmiss(model.RequestId, model.StudentId);
+            await SendMailAdmiss(model.RequestId, model.StudentId);
             try
             {
 
@@ -171,7 +171,7 @@ namespace Manager_Request.Application.Services.Students
 
             string content = "Xin chào Admin \n" +
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + "\n" +
-                 "Loại công việc: " + request.Name;
+                 "Loại công việc: " + request.Description;
 
             await SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
 
