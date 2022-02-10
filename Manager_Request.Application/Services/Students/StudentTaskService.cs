@@ -104,7 +104,7 @@ namespace Manager_Request.Application.Services.Students
             if (model.Status == RequestStatus.Doing)
             {
                 model.AssignDate = DateTime.Now;
-                SendMailAssign(model.ReceiverId.ToInt(), model.RequestId);
+                await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId);
             }
             else
             {
@@ -178,7 +178,7 @@ namespace Manager_Request.Application.Services.Students
         }
 
 
-        private async void SendMailAssign(int receiverId, int requestId)
+        private async Task SendMailAssign(int receiverId, int requestId)
         {
 
             var user = await _userSv.FindByIdAsync(receiverId);

@@ -63,8 +63,8 @@ namespace Manager_Request.Data.EF
                 {
                     Name = "Giấy xác nhận SV: Tạm hoãn nghĩa vụ quân sự",
                     Description = "GXNSV-Tạm hoãn nghĩa vụ quân sự",
-                    SortOrder=1,
-                    Status=Status.Active
+                    SortOrder = 1,
+                    Status = Status.Active
                 });
                 requestTypes.Add(new RequestType
                 {
@@ -177,8 +177,40 @@ namespace Manager_Request.Data.EF
                 _context.SaveChanges();
             }
 
-            
-            
+            if (!_context.Departments.Any())
+            {
+                List<Department> departments = new List<Department>();
+
+
+                departments.Add(new Department
+                {
+                    Name = "Khoa CNTT",
+                    Note = "Khoa Công Nghệ Thông Tin",
+                    Status =Status.Active
+                });
+
+                departments.Add(new Department
+                {
+                    Name = "Khoa Điều Dưỡng ",
+                    Note = "Khoa điều dưỡng",
+                    Status = Status.Active
+
+                });
+
+                departments.Add(new Department
+                {
+                    Name = "Khoa Quản Trị Kinh Doanh",
+                    Note = "Khoa quản trị kinh doanh",
+                    Status = Status.Active
+
+                });
+                _context.Departments.AddRange(departments);
+                _context.SaveChanges();
+            }
+
+
+
+
         }
     }
 }

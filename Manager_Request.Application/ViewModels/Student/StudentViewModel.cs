@@ -32,6 +32,5 @@ namespace Manager_Request.Application.ViewModels
 
         public virtual DepartmentViewModel Department { get; set; }
 
-
     }
 }

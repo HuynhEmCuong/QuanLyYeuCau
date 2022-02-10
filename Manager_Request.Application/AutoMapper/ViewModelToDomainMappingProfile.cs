@@ -11,7 +11,7 @@ namespace Manager_Request.Application.AutoMapper
         public ViewModelToDomainMappingProfile()
         {
             CreateMap<StudentViewModel, Student>();
-            CreateMap<StudentTaskViewModel, StudentTask>();
+            CreateMap<StudentTaskViewModel, StudentTask>().ForMember(x =>x.RequestType, opt =>opt.Ignore());
             CreateMap<RequestTypeViewModel, RequestType>();
             CreateMap<AppUserViewModel, AppUser>();
             CreateMap<DepartmentViewModel, Department>();

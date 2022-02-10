@@ -26,20 +26,26 @@ namespace Manager_Request.Controllers.Department
             return Ok(await _service.GetAllAsync());
         }
 
+        [HttpGet]
+        public async Task<ActionResult> FindByIdAsync(int id)
+        {
+            return Ok(await _service.FindByIdAsync(id));
+        }
+
         [HttpPost]
-        public async Task<IActionResult> AddAsync(DepartmentViewModel model)
+        public async Task<IActionResult> AddAsync([FromBody] DepartmentViewModel model)
         {
             return Ok(await _service.AddAsync(model));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(DepartmentViewModel model)
+        public async Task<IActionResult> UpdateAsync([FromBody] DepartmentViewModel model)
         {
             return Ok(await _service.UpdateAsync(model));
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(DepartmentViewModel model)
+        public async Task<IActionResult> DeleteAsync([FromBody] DepartmentViewModel model)
         {
             return Ok(await _service.DeleteAsync(model));
         }
