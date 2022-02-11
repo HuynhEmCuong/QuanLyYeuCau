@@ -117,12 +117,13 @@ namespace Manager_Request.Application.Services.Students
                 await _unitOfWork.SaveChangeAsync();
                 var data = _mapper.Map<StudentTaskViewModel>(item);
                 data.AppUser = await GetUser(item.ReceiverId.ToString());
+                //data.RequestType = model.RequestType;
                 operationResult = new OperationResult()
                 {
                     StatusCode = StatusCode.Ok,
                     Message = MessageReponse.UpdateSuccess,
                     Success = true,
-                    Data = item
+                    Data = data
                 };
             }
             catch (Exception ex)
