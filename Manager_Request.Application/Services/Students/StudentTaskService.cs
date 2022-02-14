@@ -15,12 +15,15 @@ using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
 using Manager_Request.Ultilities;
 using Manager_Request.Utilities.Dtos;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QLHB.Data.EF;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,6 +36,8 @@ namespace Manager_Request.Application.Services.Students
         Task<StudentTaskViewModel> GetTaskInclude(int id);
 
         Task<StudentTaskReportViewModel> ReportTask();
+
+        object TestGetFile();
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -47,8 +52,9 @@ namespace Manager_Request.Application.Services.Students
         private readonly IUserService _userSv;
         private OperationResult operationResult;
         private readonly MailOptions _mail;
+        private IHostingEnvironment _env;
 
-        public StudentTaskService(IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
+        public StudentTaskService(IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
             IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail)
             : base(repository, unitOfWork, mapper, configMapper)
         {
@@ -61,6 +67,7 @@ namespace Manager_Request.Application.Services.Students
             _requestTypeSv = requestTypeSv;
             _studentSv = studentSv;
             _userSv = userSv;
+            _env = env;
         }
 
         public async Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId)
@@ -165,7 +172,7 @@ namespace Manager_Request.Application.Services.Students
                 var item = await _repository.FindByIdAsync(id);
                 if (item != null)
                 {
-                    if(item.Status == RequestStatus.Received)
+                    if (item.Status == RequestStatus.Received)
                     {
                         _repository.Remove(item);
                         await _unitOfWork.SaveChangeAsync();
@@ -207,8 +214,6 @@ namespace Manager_Request.Application.Services.Students
         }
 
 
-
-
         private async Task<AppUserViewModel> GetUser(string id)
         {
             return await _userSv.FindByIdAsync(id);
@@ -219,7 +224,7 @@ namespace Manager_Request.Application.Services.Students
             var request = await _requestTypeSv.FindByIdAsync(requestId);
             var student = await _studentSv.FindByIdAsync(studentId);
 
-            string content = "Xin chào Admin \n"+
+            string content = "Xin chào Admin \n" +
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + "\n" +
                  "Loại công việc: " + request.Description;
 
@@ -278,5 +283,15 @@ namespace Manager_Request.Application.Services.Students
 
 
 
+        public object TestGetFile()
+        {
+            string folderRoot = _env.WebRootPath;
+            string pathFiletest = folderRoot + "/FileUpload/Task/2002-Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf";
+            var pathFile = Path.Combine(Directory.GetCurrentDirectory(), pathFiletest);
+            FileInfo fi = new FileInfo(pathFile);
+            var a = new Attachment(pathFile);
+            byte[] test = new byte[3];
+            return test;
+        }
     }
 }

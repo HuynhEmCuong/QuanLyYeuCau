@@ -65,6 +65,13 @@ namespace Manager_Request.Controllers.Student
             return Ok(await _service.ReportTask());
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetFile()
+        {
+            return Ok(_service.TestGetFile());
+        }
+
 
     }
 }

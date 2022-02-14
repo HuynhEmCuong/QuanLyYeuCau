@@ -26,10 +26,22 @@ namespace Manager_Request.Ultilities
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = isBodyHtml;
-            if (file != null)
+            //if (file != null)
+            //{
+            //    //mail.Attachments.Add(new Attachment(new MemoryStream(file), "Phiếu đăng ký xét tuyển ĐH chính quy năm 2021.pdf"));
+            //    mail.Attachments.Add(new Attachment(@"E:\EIU\Project\QLYC\API\Manager_Request\Manager_Request\wwwroot / FileUpload / Task / 2002 - Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf"));
+            //}
+            try
             {
-              mail.Attachments.Add(new Attachment(new MemoryStream(file), "Phiếu đăng ký xét tuyển ĐH chính quy năm 2021.pdf"));
+                mail.Attachments.Add(new Attachment(@"E:\EIU\Project\QLYC\API\Manager_Request\Manager_Request\wwwroot/FileUpload/Task/2002-Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf"));
             }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
+
 
             smtpServer.Host = host;
             smtpServer.Credentials = new NetworkCredential(from, password);
