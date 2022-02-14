@@ -17,5 +17,7 @@ namespace Manager_Request.Application.Const
         public static string Exits = "Đã tồn tại";
         public static string Invalid = "Không hợp lệ";
         public static string CodeSign = "Chuỗi viết liền không dấu";
+
+        public static string DoingTask = "Yêu cầu đã được xử lý không thể xoá";
     }
 }

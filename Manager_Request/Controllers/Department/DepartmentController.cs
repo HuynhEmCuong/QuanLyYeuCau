@@ -45,9 +45,9 @@ namespace Manager_Request.Controllers.Department
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromBody] DepartmentViewModel model)
+        public async Task<IActionResult> DeleteAsync(int key)
         {
-            return Ok(await _service.DeleteAsync(model));
+            return Ok(await _service.DeleteAsync(key));
         }
 
         [HttpGet]

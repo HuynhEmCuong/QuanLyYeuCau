@@ -158,6 +158,56 @@ namespace Manager_Request.Application.Services.Students
             return operationResult;
         }
 
+        public async override Task<OperationResult> DeleteAsync(object id)
+        {
+            try
+            {
+                var item = await _repository.FindByIdAsync(id);
+                if (item != null)
+                {
+                    if(item.Status == RequestStatus.Received)
+                    {
+                        _repository.Remove(item);
+                        await _unitOfWork.SaveChangeAsync();
+
+                        operationResult = new OperationResult()
+                        {
+                            StatusCode = StatusCode.Ok,
+                            Message = MessageReponse.DeleteSuccess,
+                            Success = true,
+                            Data = item
+                        };
+                    }
+                    else
+                    {
+                        operationResult = new OperationResult()
+                        {
+                            StatusCode = StatusCode.Ok,
+                            Message = MessageReponse.DoingTask,
+                            Success = false
+                        };
+                    }
+                }
+                else
+                {
+                    operationResult = new OperationResult()
+                    {
+                        StatusCode = StatusCode.BadRequest,
+                        Message = MessageReponse.NotFoundData,
+                        Success = false
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+
+            return operationResult;
+        }
+
+
+
 
         private async Task<AppUserViewModel> GetUser(string id)
         {
@@ -169,8 +219,7 @@ namespace Manager_Request.Application.Services.Students
             var request = await _requestTypeSv.FindByIdAsync(requestId);
             var student = await _studentSv.FindByIdAsync(studentId);
 
-
-            string content = "Xin chào Admin \n" +
+            string content = "Xin chào Admin \n"+
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + "\n" +
                  "Loại công việc: " + request.Description;
 
@@ -181,7 +230,6 @@ namespace Manager_Request.Application.Services.Students
 
         private async Task SendMailAssign(int receiverId, int requestId)
         {
-
             var user = await _userSv.FindByIdAsync(receiverId);
             var request = await _requestTypeSv.FindByIdAsync(requestId);
 

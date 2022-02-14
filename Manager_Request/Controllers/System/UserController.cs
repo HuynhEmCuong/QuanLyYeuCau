@@ -9,7 +9,6 @@ using Manager_Request.Application.Configuration;
 
 namespace Manager_Request.API.Controllers
 {
-    [AllowAnonymous]
     public class UserController : BaseApiController
     {
         private readonly IUserService _service;
