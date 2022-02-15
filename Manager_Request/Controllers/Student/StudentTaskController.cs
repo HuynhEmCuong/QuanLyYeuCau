@@ -66,12 +66,9 @@ namespace Manager_Request.Controllers.Student
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult GetFile()
+        public async Task<IActionResult> CheckTaskOfUser(int userId, int taskId)
         {
-            return Ok(_service.TestGetFile());
+            return Ok(await _service.CheckTaskOfUser(userId, taskId));
         }
-
-
     }
 }

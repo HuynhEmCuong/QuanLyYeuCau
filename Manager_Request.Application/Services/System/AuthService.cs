@@ -164,6 +164,7 @@ namespace Manager_Request.Application.Services.System
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim("id", user.Id.ToString()),
                             new Claim("name", user.Name),
+                            new Claim("email", user.Email),
                             new Claim("phonenumber", user.PhoneNumber??string.Empty),
                             new Claim("roles",roles.ToJsonString()),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

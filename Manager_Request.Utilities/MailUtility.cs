@@ -11,7 +11,7 @@ namespace Manager_Request.Ultilities
     {
         #region Methods
 
-        public static bool Send(string from, string displayName, string password, string to, string subject, string body, bool isBodyHtml, string host, int port, bool enableSSL, ref Exception error, byte[] file)
+        public static bool Send(string from, string displayName, string password, string to, string subject, string body, bool isBodyHtml, string host, int port, bool enableSSL, ref Exception error, byte[] file, string urlFile = "")
         {
             //Khai báo một lá thư
             MailMessage mail = new MailMessage();
@@ -26,22 +26,10 @@ namespace Manager_Request.Ultilities
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = isBodyHtml;
-            //if (file != null)
-            //{
-            //    //mail.Attachments.Add(new Attachment(new MemoryStream(file), "Phiếu đăng ký xét tuyển ĐH chính quy năm 2021.pdf"));
-            //    mail.Attachments.Add(new Attachment(@"E:\EIU\Project\QLYC\API\Manager_Request\Manager_Request\wwwroot / FileUpload / Task / 2002 - Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf"));
-            //}
-            try
-            {
-                mail.Attachments.Add(new Attachment(@"E:\EIU\Project\QLYC\API\Manager_Request\Manager_Request\wwwroot/FileUpload/Task/2002-Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf"));
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-           
-
+            if (file != null)
+                mail.Attachments.Add(new Attachment(new MemoryStream(file), "Phiếu đăng ký xét tuyển ĐH chính quy năm 2021.pdf"));
+            if (!urlFile.IsNullOrEmpty())
+                mail.Attachments.Add(new Attachment(urlFile));
 
             smtpServer.Host = host;
             smtpServer.Credentials = new NetworkCredential(from, password);
@@ -64,7 +52,7 @@ namespace Manager_Request.Ultilities
         public bool Send()
         {
             Exception error = null;
-            bool result = Send(this.From, this.DisplayName, this.Password, this.To, this.Subject, this.Body, this.IsBodyHtml, this.Host, this.Port, this.EnableSSL, ref error, this.File);
+            bool result = Send(this.From, this.DisplayName, this.Password, this.To, this.Subject, this.Body, this.IsBodyHtml, this.Host, this.Port, this.EnableSSL, ref error, this.File,this.UrlFile);
             this.Error = error;
 
             return result;
@@ -210,6 +198,9 @@ namespace Manager_Request.Ultilities
         }
 
         public byte[] File { get; set; }
+
+
+        public string UrlFile { get; set; }
 
         #endregion Properties
 

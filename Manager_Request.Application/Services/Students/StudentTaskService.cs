@@ -16,6 +16,7 @@ using Manager_Request.Data.Enums;
 using Manager_Request.Ultilities;
 using Manager_Request.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QLHB.Data.EF;
@@ -37,7 +38,7 @@ namespace Manager_Request.Application.Services.Students
 
         Task<StudentTaskReportViewModel> ReportTask();
 
-        object TestGetFile();
+        Task<OperationResult> CheckTaskOfUser(int userId, int taskId);
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -53,8 +54,9 @@ namespace Manager_Request.Application.Services.Students
         private OperationResult operationResult;
         private readonly MailOptions _mail;
         private IHostingEnvironment _env;
+        public readonly IHttpContextAccessor _contextAccessor;
 
-        public StudentTaskService(IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
+        public StudentTaskService(IHttpContextAccessor contextAccessor,IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
             IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail)
             : base(repository, unitOfWork, mapper, configMapper)
         {
@@ -68,6 +70,7 @@ namespace Manager_Request.Application.Services.Students
             _studentSv = studentSv;
             _userSv = userSv;
             _env = env;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId)
@@ -113,9 +116,10 @@ namespace Manager_Request.Application.Services.Students
                 model.AssignDate = DateTime.Now;
                 await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId);
             }
-            else
+            else  //Status ==3 
             {
                 model.FinishDate = DateTime.Now;
+                await SendMailComplete(model.FilePath,model.StudentId);
             }
             var item = _mapper.Map<StudentTask>(model);
             try
@@ -237,14 +241,27 @@ namespace Manager_Request.Application.Services.Students
         {
             var user = await _userSv.FindByIdAsync(receiverId);
             var request = await _requestTypeSv.FindByIdAsync(requestId);
-
             string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
-                $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine} " +
+                $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine}" +
                 $"Công việc: {request.Description}";
-            await SendMail(user.Email, 1, content, "Thông báo công việc", false);
+            await SendMail(user.Email, _contextAccessor.HttpContext.User.GetUserId(), content, "Thông báo công việc", false);
         }
 
-        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false)
+        private async Task SendMailComplete(string urlFile, int studentId)
+        {
+            var student = await _studentSv.FindByIdAsync(studentId);
+            string folderRoot = _env.WebRootPath;
+            string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
+
+            string content = $"Chào em {student.FullName} {Environment.NewLine}" +
+                $"Em vui lòng tải file kết quả đính kèm. Em có thể đến PĐT để nhận bản giấy vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé. {Environment.NewLine}" +
+                $"Thân";
+
+            await SendMail(student.Email, _contextAccessor.HttpContext.User.GetUserId(), content, "Thông báo trả yêu cầu", false, pathFile);
+
+        }
+       
+        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false, string urlFile ="")
         {
             MailUtility mail = new MailUtility();
             //mail.From = "admissions@eiu.edu.vn";
@@ -258,9 +275,9 @@ namespace Manager_Request.Application.Services.Students
             mail.Subject = subject;
             mail.Body = content;
             mail.IsBodyHtml = isBodyHtml;
+            mail.UrlFile = urlFile;
 
             bool checkSend = mail.Send();
-
 
             EmailLog mailLog = new EmailLog
             {
@@ -281,17 +298,27 @@ namespace Manager_Request.Application.Services.Students
             return checkSend;
         }
 
-
-
-        public object TestGetFile()
+        public async Task<OperationResult> CheckTaskOfUser(int userId, int taskId)
         {
-            string folderRoot = _env.WebRootPath;
-            string pathFiletest = folderRoot + "/FileUpload/Task/2002-Hotrochiphihoctaptaidiaphuong_11_2_2022637801717068964165.pdf";
-            var pathFile = Path.Combine(Directory.GetCurrentDirectory(), pathFiletest);
-            FileInfo fi = new FileInfo(pathFile);
-            var a = new Attachment(pathFile);
-            byte[] test = new byte[3];
-            return test;
+            var item = await _repository.FindSingleAsync(x => x.Id ==taskId && x.ReceiverId ==userId);
+            if(item != null)
+            {
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Success = true,
+                   
+                };
+            }else
+            {
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Success = false,
+                };
+
+            }
+            return operationResult;
         }
     }
 }
