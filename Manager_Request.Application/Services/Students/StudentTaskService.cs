@@ -110,16 +110,17 @@ namespace Manager_Request.Application.Services.Students
 
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {
+            int  userId = _contextAccessor.HttpContext.User.GetUserId();
             //Status ==2 
             if (model.Status == RequestStatus.Doing)
             {
                 model.AssignDate = DateTime.Now;
-                await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId);
+                await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId, userId);
             }
             else  //Status ==3 
             {
                 model.FinishDate = DateTime.Now;
-                await SendMailComplete(model.FilePath,model.StudentId);
+                await SendMailComplete(model.FilePath,model.StudentId, userId);
             }
             var item = _mapper.Map<StudentTask>(model);
             try
@@ -237,17 +238,17 @@ namespace Manager_Request.Application.Services.Students
         }
 
 
-        private async Task SendMailAssign(int receiverId, int requestId)
+        private async Task SendMailAssign(int receiverId, int requestId,int userId)
         {
             var user = await _userSv.FindByIdAsync(receiverId);
             var request = await _requestTypeSv.FindByIdAsync(requestId);
             string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
                 $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine}" +
                 $"Công việc: {request.Description}";
-            await SendMail(user.Email, _contextAccessor.HttpContext.User.GetUserId(), content, "Thông báo công việc", false);
+            await SendMail(user.Email, userId, content, "Thông báo công việc", false);
         }
 
-        private async Task SendMailComplete(string urlFile, int studentId)
+        private async Task SendMailComplete(string urlFile, int studentId,int userId)
         {
             var student = await _studentSv.FindByIdAsync(studentId);
             string folderRoot = _env.WebRootPath;
@@ -257,7 +258,7 @@ namespace Manager_Request.Application.Services.Students
                 $"Em vui lòng tải file kết quả đính kèm. Em có thể đến PĐT để nhận bản giấy vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé. {Environment.NewLine}" +
                 $"Thân";
 
-            await SendMail(student.Email, _contextAccessor.HttpContext.User.GetUserId(), content, "Thông báo trả yêu cầu", false, pathFile);
+            await SendMail(student.Email, userId, content, "Thông báo trả yêu cầu", false, pathFile);
 
         }
        

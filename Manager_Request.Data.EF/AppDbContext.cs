@@ -74,7 +74,7 @@ namespace QLHB.Data.EF
                 {
                     if (item.State == EntityState.Added)
                     {
-                        SetValueProperty(ref changedOrAddedItem, "CreateDate", "CreateBy");
+                        SetValueProperty(ref changedOrAddedItem, "CreateDate", null);
                     }
                     if (item.State == EntityState.Modified)
                     {
