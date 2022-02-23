@@ -10,12 +10,15 @@ services:
   manager-request:
     hostname: manager-request
     container_name: manager-request
-    image: huynhcuongem75/manager-request
+    image: huynhcuongem75/manager-request:latest
     build: 
         context: ./
         dockerfile: ./Manager_Request/Dockerfile
     restart: always
+    volumes:
+      -  D:\Backup\test:/app/wwwroot/FileUpload/Task
+
     networks:
       - web-net
     ports:
-      - 1997:80
+      - 1010:80
