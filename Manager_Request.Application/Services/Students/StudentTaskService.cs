@@ -56,7 +56,7 @@ namespace Manager_Request.Application.Services.Students
         private IHostingEnvironment _env;
         public readonly IHttpContextAccessor _contextAccessor;
 
-        public StudentTaskService(IHttpContextAccessor contextAccessor,IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
+        public StudentTaskService(IHttpContextAccessor contextAccessor, IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
             IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail)
             : base(repository, unitOfWork, mapper, configMapper)
         {
@@ -110,7 +110,7 @@ namespace Manager_Request.Application.Services.Students
 
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {
-            int  userId = _contextAccessor.HttpContext.User.GetUserId();
+            int userId = _contextAccessor.HttpContext.User.GetUserId();
             //Status ==2 
             if (model.Status == RequestStatus.Doing)
             {
@@ -120,7 +120,7 @@ namespace Manager_Request.Application.Services.Students
             else  //Status ==3 
             {
                 model.FinishDate = DateTime.Now;
-                await SendMailComplete(model.FilePath,model.StudentId, userId);
+                await SendMailComplete(model.FilePath, model.StudentId, userId);
             }
             var item = _mapper.Map<StudentTask>(model);
             try
@@ -148,13 +148,13 @@ namespace Manager_Request.Application.Services.Students
         public async override Task<OperationResult> AddAsync(StudentTaskViewModel model)
         {
             var item = _mapper.Map<StudentTask>(model);
-            await SendMailAdmiss(model.RequestId, model.StudentId);
+
             try
             {
 
                 await _repository.AddAsync(item);
                 _unitOfWork.SaveChange();
-
+                await SendMailAdmiss(model.RequestId, model.StudentId);
                 operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,
@@ -233,22 +233,22 @@ namespace Manager_Request.Application.Services.Students
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + "\n" +
                  "Loại công việc: " + request.Description;
 
-            await SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
+            SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
 
         }
 
 
-        private async Task SendMailAssign(int receiverId, int requestId,int userId)
+        private async Task SendMailAssign(int receiverId, int requestId, int userId)
         {
             var user = await _userSv.FindByIdAsync(receiverId);
             var request = await _requestTypeSv.FindByIdAsync(requestId);
             string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
                 $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine}" +
                 $"Công việc: {request.Description}";
-            await SendMail(user.Email, userId, content, "Thông báo công việc", false);
+             SendMail(user.Email, userId, content, "Thông báo công việc", false);
         }
 
-        private async Task SendMailComplete(string urlFile, int studentId,int userId)
+        private async Task SendMailComplete(string urlFile, int studentId, int userId)
         {
             var student = await _studentSv.FindByIdAsync(studentId);
             string folderRoot = _env.WebRootPath;
@@ -258,11 +258,11 @@ namespace Manager_Request.Application.Services.Students
                 $"Em vui lòng tải file kết quả đính kèm. Em có thể đến PĐT để nhận bản giấy vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé. {Environment.NewLine}" +
                 $"Thân";
 
-            await SendMail(student.Email, userId, content, "Thông báo trả yêu cầu", false, pathFile);
+             SendMail(student.Email, userId, content, "Thông báo trả yêu cầu", false, pathFile);
 
         }
-       
-        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false, string urlFile ="")
+
+        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false, string urlFile = "")
         {
             MailUtility mail = new MailUtility();
             //mail.From = "admissions@eiu.edu.vn";
@@ -287,30 +287,28 @@ namespace Manager_Request.Application.Services.Students
                 Sender = userId,
             };
             if (checkSend)
-            {
                 mailLog.Status = EmailStatus.send;
-            }
             else
-            {
                 mailLog.Error = mail.Error.Message;
-            }
             await _dbcontext.EmailLogs.AddAsync(mailLog);
             await _dbcontext.SaveChangesAsync();
+
             return checkSend;
         }
 
         public async Task<OperationResult> CheckTaskOfUser(int userId, int taskId)
         {
-            var item = await _repository.FindSingleAsync(x => x.Id ==taskId && x.ReceiverId ==userId);
-            if(item != null)
+            var item = await _repository.FindSingleAsync(x => x.Id == taskId && x.ReceiverId == userId);
+            if (item != null)
             {
                 operationResult = new OperationResult()
                 {
                     StatusCode = StatusCode.Ok,
                     Success = true,
-                   
+
                 };
-            }else
+            }
+            else
             {
                 operationResult = new OperationResult()
                 {
