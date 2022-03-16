@@ -117,10 +117,10 @@ namespace Manager_Request.Application.Services.Students
                 model.AssignDate = DateTime.Now;
                 await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId, userId);
             }
-            else  //Status ==3 
+            else if (model.Status == RequestStatus.Complete) //Status ==3 
             {
                 model.FinishDate = DateTime.Now;
-                await SendMailComplete(model.FilePath, model.StudentId, userId);
+                await SendMailComplete(model.RequestId, model.StudentId, userId);
             }
             var item = _mapper.Map<StudentTask>(model);
             try
@@ -237,7 +237,6 @@ namespace Manager_Request.Application.Services.Students
 
         }
 
-
         private async Task SendMailAssign(int receiverId, int requestId, int userId)
         {
             var user = await _userSv.FindByIdAsync(receiverId);
@@ -245,20 +244,24 @@ namespace Manager_Request.Application.Services.Students
             string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
                 $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine}" +
                 $"Công việc: {request.Description}";
-             SendMail(user.Email, userId, content, "Thông báo công việc", false);
+            SendMail(user.Email, userId, content, "Thông báo công việc", false);
         }
 
-        private async Task SendMailComplete(string urlFile, int studentId, int userId)
+        private async Task SendMailComplete(int requestId, int studentId, int userId)
         {
             var student = await _studentSv.FindByIdAsync(studentId);
-            string folderRoot = _env.WebRootPath;
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
+            var requestDes = (await _requestTypeSv.FindByIdAsync(requestId)).Description;
+            //string folderRoot = _env.WebRootPath;
+            //string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
 
             string content = $"Chào em {student.FullName} {Environment.NewLine}" +
-                $"Em vui lòng tải file kết quả đính kèm. Em có thể đến PĐT để nhận bản giấy vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé. {Environment.NewLine}" +
-                $"Thân";
+                $"{Environment.NewLine}" +
+                $"Em vui lòng tải file {requestDes} tại: aaoportal.eiu.edu.vn {Environment.NewLine}" +
+                $"Hoặc em có thể đến Trường để nhận bản giấy các ngày từ thứ 2 đến thứ 6 (vào giờ hành chính). {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân.";
 
-             SendMail(student.Email, userId, content, "Thông báo trả yêu cầu", false, pathFile);
+            SendMail(student.Email, userId, content, $"Thông báo trả kết quả {requestDes}", false);
 
         }
 
@@ -290,8 +293,16 @@ namespace Manager_Request.Application.Services.Students
                 mailLog.Status = EmailStatus.send;
             else
                 mailLog.Error = mail.Error.Message;
-            await _dbcontext.EmailLogs.AddAsync(mailLog);
-            await _dbcontext.SaveChangesAsync();
+            try
+            {
+                _dbcontext.EmailLogs.Add(mailLog);
+                _dbcontext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
             return checkSend;
         }
@@ -305,7 +316,6 @@ namespace Manager_Request.Application.Services.Students
                 {
                     StatusCode = StatusCode.Ok,
                     Success = true,
-
                 };
             }
             else
@@ -315,7 +325,6 @@ namespace Manager_Request.Application.Services.Students
                     StatusCode = StatusCode.Ok,
                     Success = false,
                 };
-
             }
             return operationResult;
         }
