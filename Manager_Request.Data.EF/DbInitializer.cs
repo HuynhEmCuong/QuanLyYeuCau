@@ -181,14 +181,26 @@ namespace Manager_Request.Data.EF
             {
                 List<Department> departments = new List<Department>();
 
-
                 departments.Add(new Department
                 {
+                    Name = "Khoa Kỹ Thuật",
+                    Note = "Khoa Kỹ Thuật",
+                    Status = Status.Active
+                });
+
+                departments.Add(new Department
+                {                   
                     Name = "Khoa CNTT",
                     Note = "Khoa Công Nghệ Thông Tin",
                     Status =Status.Active
                 });
+                departments.Add(new Department
+                {
+                    Name = "Khoa Quản Trị Kinh Doanh",
+                    Note = "Khoa quản trị kinh doanh",
+                    Status = Status.Active
 
+                });
                 departments.Add(new Department
                 {
                     Name = "Khoa Điều Dưỡng ",
@@ -197,13 +209,7 @@ namespace Manager_Request.Data.EF
 
                 });
 
-                departments.Add(new Department
-                {
-                    Name = "Khoa Quản Trị Kinh Doanh",
-                    Note = "Khoa quản trị kinh doanh",
-                    Status = Status.Active
-
-                });
+                
                 _context.Departments.AddRange(departments);
                 _context.SaveChanges();
             }

@@ -17,7 +17,7 @@ namespace Manager_Request.Data.Entities
 
         public DateTime? Birthday{ get; set; }
 
-        [StringLength(15)]
+        [StringLength(255)]
         public string CMND { get; set; }
 
         public Gender Gender { get; set; }
@@ -25,10 +25,10 @@ namespace Manager_Request.Data.Entities
         [StringLength(255)]
         public string Email { get; set; }
 
-        [StringLength(10)]
+        [StringLength(255)]
         public string StudentId { get; set; }
 
-        [StringLength(11)]
+        [StringLength(255)]
         public string Mobi { get; set; }
 
         public Status Status { get; set; }

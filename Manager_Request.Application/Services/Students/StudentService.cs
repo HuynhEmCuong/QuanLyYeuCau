@@ -65,71 +65,67 @@ namespace Manager_Request.Application.Services.Students
         public async Task<OperationResult> ImportStudent(IFormFile file)
         {
             string pathFile = await SaveFile(file);//
-            //using (var package = new ExcelPackage(new FileInfo(pathFile)))
-            //{
-            //    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-            //    int totalRows = worksheet.Dimension.Rows;
-            //    DateTime timeNow = DateTime.Now;
-            //    for( int i = 2; i<= totalRows; i++)
-            //    {
-            //        Student student = new Student();
-            //        student.CreateDate = timeNow;
-            //        student.StudentId = worksheet.Cells[i, 1].Value.ToSafetyString();
-            //        student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + worksheet.Cells[i, 3].Value.ToSafetyString();
-            //        student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
-            //        student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
-            //        switch(worksheet.Cells[i,6].Value.ToSafetyString().ToLower())
-            //        {
-            //            case "đã nghỉ học":
-            //                student.Status = Status.DropOut;
-            //                break;
-            //            case "đang học":
-            //                student.Status = Status.InProgress;
-            //                break;
-            //            case "tạm dừng":
-            //                student.Status = Status.Pause;
-            //                break;
-            //            case "tốt nghiệp":
-            //                student.Status = Status.Graduated;
-            //                break;
-            //        }
-            //        student.Email = worksheet.Cells[i, 7].Value.ToSafetyString();
-            //        switch (worksheet.Cells[i, 8].Value.ToSafetyString().ToLower())
-            //        {
-            //            case "kỹ thuật":
-            //                student.DepartId = 1;
-            //                break;
-            //            case "công nghệ thông tin":
-            //                student.DepartId = 2;
-            //                break;
-            //            case "quản trị kinh doanh":
-            //                student.DepartId = 3;
-            //                break;
-            //            case "điều dưỡng":
-            //                student.DepartId = 4;
-            //                break;
-            //        }
-            //        student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
-            //        student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();
-            //        try
-            //        {
-            //            _repository.Add(student);
-            //        }catch(Exception ex)
-            //        {
-            //            operationResult = ex.GetMessageError();
-            //            return operationResult;
-            //        }
-            //    }
-            //}
-            
+            using (var package = new ExcelPackage(new FileInfo(pathFile)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = worksheet.Dimension.Rows;
+                DateTime timeNow = DateTime.Now;
+                for (int i = 2; i <= totalRows; i++)
+                {
+                    Student student = new Student();
+                    student.CreateDate = timeNow;
+                    student.StudentId = worksheet.Cells[i, 1].Value.ToSafetyString();
+                    student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + worksheet.Cells[i, 3].Value.ToSafetyString();
+                    student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
+                    student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
+                    switch (worksheet.Cells[i, 6].Value.ToSafetyString().ToLower())
+                    {
+                        case "đã nghỉ học":
+                            student.Status = Status.DropOut;
+                            break;
+                        case "đang học":
+                            student.Status = Status.InProgress;
+                            break;
+                        case "tạm dừng":
+                            student.Status = Status.Pause;
+                            break;
+                        case "tốt nghiệp":
+                            student.Status = Status.Graduated;
+                            break;
+                    }
+                    student.Email = worksheet.Cells[i, 7].Value.ToSafetyString();
+                    //switch (worksheet.Cells[i, 8].Value.ToSafetyString().ToLower())
+                    //{
+                    //    case "kỹ thuật":
+                    //        student.DepartId = 1;
+                    //        break;
+                    //    case "công nghệ thông tin":
+                    //        student.DepartId = 2;
+                    //        break;
+                    //    case "quản trị kinh doanh":
+                    //        student.DepartId = 3;
+                    //        break;
+                    //    case "điều dưỡng":
+                    //        student.DepartId = 4;
+                    //        break;
+                    //}
+                    student.DepartId = int.Parse(worksheet.Cells[i, 8].Value.ToSafetyString());
+                    student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
+                    student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();
+                    try
+                    {
+                        _repository.Add(student);
+                    }
+                    catch (Exception ex)
+                    {
+                        operationResult = ex.GetMessageError();
+                        return operationResult;
+                    }
+                }
+            }
+
             try
             {
-                Student test = new Student();
-                test.Birthday = Convert.ToDateTime("01/01/1988");
-                test.Gender = Gender.Male;
-                test.CMND = "12345678";
-                test.DepartId = 1;
-                _repository.Add(test);
                 await _unitOfWork.SaveChangeAsync();
                 operationResult = new OperationResult()
                 {
