@@ -10,8 +10,8 @@ using QLHB.Data.EF;
 namespace Manager_Request.Data.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211214080949_init")]
-    partial class init
+    [Migration("20220408035623_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -118,6 +118,63 @@ namespace Manager_Request.Data.EF.Migrations
                     b.ToTable("AppUsers");
                 });
 
+            modelBuilder.Entity("Manager_Request.Data.Entities.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("Manager_Request.Data.Entities.EmailLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Receiver")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Sender")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Sender");
+
+                    b.ToTable("EmailLogs");
+                });
+
             modelBuilder.Entity("Manager_Request.Data.Entities.RequestType", b =>
                 {
                     b.Property<int>("Id")
@@ -125,11 +182,19 @@ namespace Manager_Request.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -149,6 +214,19 @@ namespace Manager_Request.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CMND")
+                        .HasColumnType("nvarchar(15)")
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DepartId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
@@ -157,37 +235,63 @@ namespace Manager_Request.Data.EF.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<string>("StudenId")
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Mobi")
+                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(11);
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepartId");
+
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Manager_Request.Data.Entities.TaskList", b =>
+            modelBuilder.Entity("Manager_Request.Data.Entities.StudentTask", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Finish_date")
+                    b.Property<DateTime?>("AssignDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ModifyBy")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Modify_Date")
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<DateTime?>("FinishDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("Received_date")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ReceiverId")
                         .HasColumnType("int");
@@ -203,15 +307,13 @@ namespace Manager_Request.Data.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModifyBy");
-
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("RequestId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("TaskLists");
+                    b.ToTable("StudentTasks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -311,12 +413,24 @@ namespace Manager_Request.Data.EF.Migrations
                     b.ToTable("AppUserTokens");
                 });
 
-            modelBuilder.Entity("Manager_Request.Data.Entities.TaskList", b =>
+            modelBuilder.Entity("Manager_Request.Data.Entities.EmailLog", b =>
                 {
-                    b.HasOne("Manager_Request.Data.Entities.AppUser", "User")
+                    b.HasOne("Manager_Request.Data.Entities.AppUser", "AppUser")
                         .WithMany()
-                        .HasForeignKey("ModifyBy");
+                        .HasForeignKey("Sender")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
+            modelBuilder.Entity("Manager_Request.Data.Entities.Student", b =>
+                {
+                    b.HasOne("Manager_Request.Data.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartId");
+                });
+
+            modelBuilder.Entity("Manager_Request.Data.Entities.StudentTask", b =>
+                {
                     b.HasOne("Manager_Request.Data.Entities.AppUser", "AppUser")
                         .WithMany()
                         .HasForeignKey("ReceiverId");

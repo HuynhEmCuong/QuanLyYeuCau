@@ -15,6 +15,13 @@ namespace Manager_Request.Data.Entities
         [StringLength(255)]
         public string  FullName { get; set; }
 
+        public DateTime? Birthday{ get; set; }
+
+        [StringLength(15)]
+        public string CMND { get; set; }
+
+        public Gender Gender { get; set; }
+
         [StringLength(255)]
         public string Email { get; set; }
 

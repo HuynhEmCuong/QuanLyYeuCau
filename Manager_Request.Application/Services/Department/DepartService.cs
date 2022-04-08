@@ -11,7 +11,7 @@ namespace Manager_Request.Application.Services.DepartService
 {
     public interface IDepartService : IBaseService<DepartmentViewModel>
     {
-
+       
     }
 
     public class DepartService : BaseService<Department, DepartmentViewModel>, IDepartService
@@ -29,6 +29,8 @@ namespace Manager_Request.Application.Services.DepartService
             _mapper = mapper;
             _configMapper = configMapper;
         }
+
+        
     }
 
 }
