@@ -1,6 +1,7 @@
 ﻿using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Manager_Request.Controllers.Student
 {
-    public class StudentController :BaseApiController
+    public class StudentController : BaseApiController
     {
-        private readonly  IStudentService _service;
+        private readonly IStudentService _service;
 
         public StudentController(IStudentService service)
         {
@@ -36,6 +37,12 @@ namespace Manager_Request.Controllers.Student
         [AllowAnonymous]
         public async Task<IActionResult> UpdateStudent([FromBody] StudentViewModel model) => Ok(await _service.UpdateAsync(model));
 
-
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ImportStudent(IFormFile file)
+        {
+           
+            return Ok(await _service.ImportStudent(file));
+        }
     }
 }

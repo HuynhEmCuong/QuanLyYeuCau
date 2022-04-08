@@ -7,7 +7,11 @@ namespace Manager_Request.Data.Enums
     public enum Status
     {
         Active =1,
-        DeActive
+        DeActive,
+        DropOut,
+        InProgress,
+        Graduated,
+        Pause //tạm dừng
         
     }
 }
