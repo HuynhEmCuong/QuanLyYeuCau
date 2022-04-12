@@ -31,7 +31,7 @@ namespace Manager_Request.Data.Entities
         [StringLength(255)]
         public string Mobi { get; set; }
 
-        public Status Status { get; set; }
+        public StatusStudent Status { get; set; }
 
         public int?  DepartId { get; set; }
 

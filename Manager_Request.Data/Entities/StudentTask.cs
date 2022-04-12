@@ -16,17 +16,24 @@ namespace Manager_Request.Data.Entities
 
         public int? ReceiverId { get; set; }
 
+        public RequestStatus Status { get; set; }
+        //Note for student
         [StringLength(255)]
         public string Note { get; set; }
 
+        //Note for user
+        [StringLength(255)]
+        public string NoteUser { get; set; }
+
         public int Quantity { get; set; }
-        public DateTime? FinishDate { get; set; }
 
-        public DateTime? AssignDate { get; set; }
+        public DateTime? FinishDate { get; set; } // Thời gian hoàn thành công việc
 
-        public RequestStatus Status { get; set; }
+        public DateTime? AssignDate { get; set; } // Thời gian nhận công việc
 
-        public DateTime? CreateDate { get; set; }
+        public DateTime? IntendTime { get; set; } // Thời gian dự định hoàn thành công việc
+
+        public DateTime? CreateDate { get; set; } // Thời gian tạo  công việc
 
         [StringLength(200)]
         public string FileName { get; set; }

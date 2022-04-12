@@ -8,10 +8,7 @@ namespace Manager_Request.Data.Enums
     {
         Active =1,
         DeActive,
-        DropOut,
-        InProgress,
-        Graduated,
-        Pause //tạm dừng
+       
         
     }
 }

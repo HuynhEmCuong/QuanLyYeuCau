@@ -9,6 +9,7 @@ namespace Manager_Request.Data.Enums
         Received =1,
         Doing,
         Complete,
-        Disabled
+        Disabled,
+        FinishedLate
     }
 }

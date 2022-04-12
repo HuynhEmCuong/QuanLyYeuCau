@@ -78,22 +78,26 @@ namespace Manager_Request.Application.Services.Students
                     student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + worksheet.Cells[i, 3].Value.ToSafetyString();
                     student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
                     student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
+                    student.DepartId = worksheet.Cells[i, 8].Value.ToInt();
+                    student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
+                    student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();
+                    student.Email = worksheet.Cells[i, 7].Value.ToSafetyString();
                     switch (worksheet.Cells[i, 6].Value.ToSafetyString().ToLower())
                     {
                         case "đã nghỉ học":
-                            student.Status = Status.DropOut;
+                            student.Status = StatusStudent.DropOut;
                             break;
                         case "đang học":
-                            student.Status = Status.InProgress;
+                            student.Status = StatusStudent.InProgress;
                             break;
                         case "tạm dừng":
-                            student.Status = Status.Pause;
+                            student.Status = StatusStudent.Pause;
                             break;
                         case "tốt nghiệp":
-                            student.Status = Status.Graduated;
+                            student.Status = StatusStudent.Graduated;
                             break;
                     }
-                    student.Email = worksheet.Cells[i, 7].Value.ToSafetyString();
+                    
                     //switch (worksheet.Cells[i, 8].Value.ToSafetyString().ToLower())
                     //{
                     //    case "kỹ thuật":
@@ -109,9 +113,7 @@ namespace Manager_Request.Application.Services.Students
                     //        student.DepartId = 4;
                     //        break;
                     //}
-                    student.DepartId = int.Parse(worksheet.Cells[i, 8].Value.ToSafetyString());
-                    student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
-                    student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();
+     
                     try
                     {
                         _repository.Add(student);
