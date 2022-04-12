@@ -78,6 +78,7 @@ namespace Manager_Request.Application.Services.Students
                     student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + worksheet.Cells[i, 3].Value.ToSafetyString();
                     student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
                     student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
+
                     student.DepartId = worksheet.Cells[i, 8].Value.ToInt();
                     student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
                     student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();

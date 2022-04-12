@@ -31,13 +31,14 @@ namespace Manager_Request.Ultilities
             if (!urlFile.IsNullOrEmpty())
                 mail.Attachments.Add(new Attachment(urlFile));
 
-            smtpServer.Host = host;
-            smtpServer.Credentials = new NetworkCredential(from, password);
-            smtpServer.EnableSsl = enableSSL;
-            smtpServer.Port = port;
+         
 
             try
             {
+                smtpServer.Host = host;
+                smtpServer.Credentials = new NetworkCredential(from, password);
+                smtpServer.EnableSsl = enableSSL;
+                smtpServer.Port = port;
                 smtpServer.Send(mail);
                 return true;
             }

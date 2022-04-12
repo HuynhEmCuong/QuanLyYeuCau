@@ -14,6 +14,8 @@ namespace Manager_Request.Application.ViewModels
 
         public string Description { get; set; }
 
+        public string Note { get; set; }
+
         public Status Status { get; set; }
 
         public int SortOrder { get; set; }

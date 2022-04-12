@@ -14,11 +14,15 @@ namespace Manager_Request.Application.Service.SystemService
 {
     public interface IFileService
     {
-        Task<OperationFileResult> UploadMultiFile(List<IFormFile> files, string studentName);
-        Task<OperationFileResult> UploadFile(IFormFile file, string requestType);
-        OperationResult RemoveFile(string fileName);
+        //Task<OperationFileResult> UploadMultiFile(List<IFormFile> files, string studentName);
+        //Task<OperationFileResult> UploadFile(IFormFile file, string requestType);
+        //OperationResult RemoveFile(string fileName);
 
-        OperationResult RemoveListFile(List<string> listfileName);
+        //OperationResult RemoveListFile(List<string> listfileName);
+
+        Task<OperationFileResult> UploadFileStudent(IFormFile file, string requestType);
+        OperationResult RemoveFileStudent(string fileName);
+
     }
     public class FileService : IFileService
     {
@@ -28,9 +32,22 @@ namespace Manager_Request.Application.Service.SystemService
             _env = env;
         }
 
-        public OperationResult RemoveFile(string fileName)
+
+        public  OperationResult RemoveFileStudent(string fileName)
         {
-            string folderPath = "wwwroot/FileUpload/Task/";
+            return  RemoveFile(fileName, "wwwroot/FileUpload/FileStudent/");
+        }
+        public async Task<OperationFileResult> UploadFileStudent(IFormFile file, string requestType)
+        {
+            return await UploadFile(file, requestType, "FileUpload/FileStudent/");
+        }
+
+
+
+        //Funtion Private
+
+        private OperationResult RemoveFile(string fileName, string folderPath = "wwwroot/FileUpload/Task/")
+        {
             string filePath = Path.Combine(folderPath, fileName);
 
             OperationResult operationResult = new OperationResult();
@@ -66,45 +83,9 @@ namespace Manager_Request.Application.Service.SystemService
             }
             return operationResult;
         }
-
-        public OperationResult RemoveListFile(List<string> listfileName)
-        {
-            string folderPath = "wwwroot/FileUpload/Task/";
-
-            OperationResult operationResult = new OperationResult();
-            foreach (var fileName in listfileName)
-            {
-                if(fileName != "")
-                {
-                    string filePath = Path.Combine(folderPath, fileName);
-                    if (File.Exists(filePath))
-                    {
-                        try
-                        {
-                            File.Delete(filePath);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            return operationResult = ex.GetMessageError();
-                        }
-
-                    }
-                }
-            }
-            operationResult = new OperationResult
-            {
-                Success = true,
-                Message="Success"
-            
-            };
-            return operationResult;
-        }
-
-        public async Task<OperationFileResult> UploadFile(IFormFile file, string requestType)
+        private async Task<OperationFileResult> UploadFile(IFormFile file, string requestType, string folderPath = "FileUpload/Task/")
         {
             string folderRoot = _env.WebRootPath;
-            string folderPath = "FileUpload/Task/";
             bool exists = Directory.Exists(Path.Combine(folderRoot, folderPath));
             if (!exists)
                 Directory.CreateDirectory(Path.Combine(folderRoot, folderPath));
@@ -144,7 +125,8 @@ namespace Manager_Request.Application.Service.SystemService
             }
             return operationFileResult;
         }
-        public async Task<OperationFileResult> UploadMultiFile(List<IFormFile> files, string studentName)
+
+        private async Task<OperationFileResult> UploadMultiFile(List<IFormFile> files, string studentName)
         {
             var listFileResponse = new List<FileResponse>();
             foreach (var file in files)
@@ -157,5 +139,40 @@ namespace Manager_Request.Application.Service.SystemService
             }
             return new OperationFileResult() { Success = true, FileResponses = listFileResponse };
         }
+        private OperationResult RemoveListFile(List<string> listfileName)
+        {
+            string folderPath = "wwwroot/FileUpload/Task/";
+
+            OperationResult operationResult = new OperationResult();
+            foreach (var fileName in listfileName)
+            {
+                if (fileName != "")
+                {
+                    string filePath = Path.Combine(folderPath, fileName);
+                    if (File.Exists(filePath))
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            return operationResult = ex.GetMessageError();
+                        }
+
+                    }
+                }
+            }
+            operationResult = new OperationResult
+            {
+                Success = true,
+                Message = "Success"
+
+            };
+            return operationResult;
+        }
+
+
     }
 }

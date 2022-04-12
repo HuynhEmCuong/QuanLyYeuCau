@@ -148,7 +148,8 @@ namespace Manager_Request.Data.EF
                     Name = "Bảng điểm",
                     Description = "Bảng điểm",
                     SortOrder = 13,
-                    Status = Status.Active
+                    Status = Status.Active,
+                    Note= "SV cần đóng lệ phí cấp bảng điểm trước khi nhận bảng điểm (70.000 VNĐ/bảng)"
                 });
                 requestTypes.Add(new RequestType
                 {

@@ -36,10 +36,17 @@ namespace Manager_Request.Data.Entities
         public DateTime? CreateDate { get; set; } // Thời gian tạo  công việc
 
         [StringLength(200)]
-        public string FileName { get; set; }
+        public string FileName { get; set; }  // Name File  đính kèm của chuyên viên
 
         [StringLength(200)]
-        public string FilePath { get; set; }
+        public string FilePath { get; set; } // Path File  đính kèm của chuyên viên
+
+
+        [StringLength(200)]
+        public string FileNameStudent { get; set; } // File đính kèm của sinh viên
+
+        [StringLength(200)]
+        public string FilePathStudent { get; set; } // Path File đính kèm của sinh viên
 
         public DateTime? ModifyDate { get; set; }
 
