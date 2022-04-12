@@ -19,28 +19,28 @@ namespace Manager_Request.Controllers.SystemController
             _service = service;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UploadMultiFileStudent([FromForm] List<IFormFile> file,string studentName)
-        {
-            return Ok(await _service.UploadMultiFile(file, studentName));
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> UploadMultiFileStudent([FromForm] List<IFormFile> file,string studentName)
+        //{
+        //    return Ok(await _service.UploadMultiFile(file, studentName));
+        //}
+
+        //[HttpPost]
+        //public IActionResult RemoveAllFile([FromBody] List<string> listFileName)
+        //{
+        //    return Ok(_service.RemoveListFile(listFileName));
+        //}
 
         [HttpGet]
-        public IActionResult RemoveFile(string fileName)
+        public IActionResult RemoveFileStudent(string fileName)
         {
-            return Ok(_service.RemoveFile(fileName));
+            return Ok(_service.RemoveFileStudent(fileName));
         }
 
         [HttpPost]
-        public IActionResult RemoveAllFile([FromBody] List<string> listFileName)
+        public async Task<IActionResult> UploadFileStudent([FromForm] IFormFile file, string requestType)
         {
-            return Ok(_service.RemoveListFile(listFileName));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file, string requestType)
-        {
-            return Ok(await _service.UploadFile(file, requestType));
+            return Ok(await _service.UploadFileStudent(file, requestType));
         }
     }
 }
