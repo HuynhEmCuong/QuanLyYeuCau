@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Manager_Request.Application.Const;
+using Manager_Request.Application.Dtos.Student;
 using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
 using Manager_Request.Application.ViewModels;
@@ -21,7 +22,7 @@ namespace Manager_Request.Application.Services.Students
 {
     public interface IStudentService : IBaseService<StudentViewModel>
     {
-        Task<OperationResult> CheckUserExist(StudentViewModel model);
+        Task<OperationResult> CheckUserExist(LoginStudentDto model);
         Task<OperationResult> ImportStudent(IFormFile file);
     }
 
@@ -44,9 +45,9 @@ namespace Manager_Request.Application.Services.Students
             _env = env;
         }
 
-        public async Task<OperationResult> CheckUserExist(StudentViewModel model)
+        public async Task<OperationResult> CheckUserExist(LoginStudentDto model)
         {
-            var item = await _repository.FindAll(x => x.Email == model.Email).FirstOrDefaultAsync();
+            var item = await _repository.FindAll(x => x.Email == model.Email && x.StudentId == model.StudentId).FirstOrDefaultAsync();
             if (!item.IsNull())
             {
                 operationResult = new OperationResult
@@ -58,7 +59,12 @@ namespace Manager_Request.Application.Services.Students
             }
             else
             {
-                operationResult = await AddAsync(model);
+                operationResult  = new OperationResult
+                {
+                    StatusCode = StatusCode.Ok,
+                    Success = false,
+                    Message = "Sinh viên không được tìm thấy"
+                };
             }
             return operationResult;
         }
@@ -79,7 +85,7 @@ namespace Manager_Request.Application.Services.Students
                     student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
                     student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
 
-                    student.DepartId = worksheet.Cells[i, 8].Value.ToInt();
+                    //student.DepartId = worksheet.Cells[i, 8].Value.ToInt();
                     student.CMND = worksheet.Cells[i, 9].Value.ToSafetyString();
                     student.Mobi = worksheet.Cells[i, 10].Value.ToSafetyString();
                     student.Email = worksheet.Cells[i, 7].Value.ToSafetyString();
@@ -98,23 +104,23 @@ namespace Manager_Request.Application.Services.Students
                             student.Status = StatusStudent.Graduated;
                             break;
                     }
-                    
-                    //switch (worksheet.Cells[i, 8].Value.ToSafetyString().ToLower())
-                    //{
-                    //    case "kỹ thuật":
-                    //        student.DepartId = 1;
-                    //        break;
-                    //    case "công nghệ thông tin":
-                    //        student.DepartId = 2;
-                    //        break;
-                    //    case "quản trị kinh doanh":
-                    //        student.DepartId = 3;
-                    //        break;
-                    //    case "điều dưỡng":
-                    //        student.DepartId = 4;
-                    //        break;
-                    //}
-     
+
+                    switch (worksheet.Cells[i, 8].Value.ToSafetyString().ToLower())
+                    {
+                        case "kỹ thuật":
+                            student.DepartId = 1;
+                            break;
+                        case "công nghệ thông tin":
+                            student.DepartId = 2;
+                            break;
+                        case "quản trị kinh doanh":
+                            student.DepartId = 3;
+                            break;
+                        case "điều dưỡng":
+                            student.DepartId = 4;
+                            break;
+                    }
+
                     try
                     {
                         _repository.Add(student);

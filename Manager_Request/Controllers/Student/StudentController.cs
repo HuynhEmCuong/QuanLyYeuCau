@@ -1,4 +1,5 @@
-﻿using Manager_Request.Application.Services.Students;
+﻿using Manager_Request.Application.Dtos.Student;
+using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace Manager_Request.Controllers.Student
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> CheckUserExist([FromBody] StudentViewModel model) => Ok(await _service.CheckUserExist(model));
+        public async Task<ActionResult> CheckUserExist([FromBody] LoginStudentDto model) => Ok(await _service.CheckUserExist(model));
 
 
         [HttpGet]
