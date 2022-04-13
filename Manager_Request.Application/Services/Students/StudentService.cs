@@ -24,6 +24,8 @@ namespace Manager_Request.Application.Services.Students
     {
         Task<OperationResult> CheckUserExist(LoginStudentDto model);
         Task<OperationResult> ImportStudent(IFormFile file);
+
+        Task<StudentViewModel> GetStudentByMSSV(string mssv);
     }
 
     public class StudentService : BaseService<Student, StudentViewModel>, IStudentService
@@ -59,7 +61,7 @@ namespace Manager_Request.Application.Services.Students
             }
             else
             {
-                operationResult  = new OperationResult
+                operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,
                     Success = false,
@@ -143,7 +145,7 @@ namespace Manager_Request.Application.Services.Students
                     Success = true
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 operationResult = ex.GetMessageError();
             }
@@ -173,6 +175,13 @@ namespace Manager_Request.Application.Services.Students
             }
 
             return filePath;
+        }
+
+        public async Task<StudentViewModel> GetStudentByMSSV(string mssv)
+        {
+            var item = await _repository.FindSingleAsync(x => x.StudentId == mssv);
+            var result = _mapper.Map<StudentViewModel>(item);
+            return result;
         }
     }
 }

@@ -40,10 +40,11 @@ namespace Manager_Request.Controllers.Student
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> ImportStudent(IFormFile file)
-        {
-           
-            return Ok(await _service.ImportStudent(file));
-        }
+        public async Task<IActionResult> ImportStudent(IFormFile file) => Ok(await _service.ImportStudent(file));
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetStudentByStudentId(string mssv) => Ok(await _service.GetStudentByMSSV(mssv));
+        
     }
 }
