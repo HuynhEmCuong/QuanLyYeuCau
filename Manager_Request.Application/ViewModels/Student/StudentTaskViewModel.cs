@@ -20,11 +20,15 @@ namespace Manager_Request.Application.ViewModels
 
         public string Note { get; set; }
 
+        public string NoteUser { get; set; }
+         
         public int Quantity { get; set; }
 
         public DateTime? FinishDate { get; set; }
 
         public DateTime? AssignDate { get; set; }
+
+        public DateTime? IntendTime { get; set; }
 
         public RequestStatus Status { get; set; }
 

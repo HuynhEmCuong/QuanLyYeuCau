@@ -1,4 +1,5 @@
 ﻿using Manager_Request.Data.Enums;
+using Manager_Request.Data.Enums.RequestType;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,10 @@ namespace Manager_Request.Application.ViewModels
         public string Description { get; set; }
 
         public string Note { get; set; }
+
+        public int? ExecutionTime { get; set; }
+
+        public RequestTypeStatus StatusRequest { get; set; }
 
         public Status Status { get; set; }
 
