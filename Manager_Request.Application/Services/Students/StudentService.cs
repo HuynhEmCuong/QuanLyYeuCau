@@ -83,7 +83,7 @@ namespace Manager_Request.Application.Services.Students
                     Student student = new Student();
                     student.CreateDate = timeNow;
                     student.StudentId = worksheet.Cells[i, 1].Value.ToSafetyString();
-                    student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + worksheet.Cells[i, 3].Value.ToSafetyString();
+                    student.FullName = worksheet.Cells[i, 2].Value.ToSafetyString() + " " + worksheet.Cells[i, 3].Value.ToSafetyString();
                     student.Birthday = worksheet.Cells[i, 4].Value.ToSafetyString().ToDateTimeWithFormat("dd/MM/yyyy");
                     student.Gender = worksheet.Cells[i, 5].Value.ToSafetyString() == "Nam" ? Gender.Male : Gender.Female;
 
