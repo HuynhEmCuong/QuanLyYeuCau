@@ -22,7 +22,6 @@ namespace Manager_Request.Ultilities
             //Ghi các giá trị lên lá thư
             mail.From = new MailAddress(from, displayName);
             mail.To.Add(to);
-            //mail.To.Add("admissions@eiu.edu.vn");
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = isBodyHtml;

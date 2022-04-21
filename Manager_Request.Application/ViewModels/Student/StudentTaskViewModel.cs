@@ -20,8 +20,6 @@ namespace Manager_Request.Application.ViewModels
 
         public string Note { get; set; }
 
-        public string NoteUser { get; set; }
-         
         public int Quantity { get; set; }
 
         public DateTime? FinishDate { get; set; }
@@ -49,5 +47,7 @@ namespace Manager_Request.Application.ViewModels
         public virtual StudentViewModel Student { get; set; }
 
         public virtual AppUserViewModel AppUser { get; set; }
+
+        public virtual ICollection<NoteTask> NoteTasks { get; set; }
     }
 }

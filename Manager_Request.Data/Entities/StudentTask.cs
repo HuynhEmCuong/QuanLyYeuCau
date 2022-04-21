@@ -1,5 +1,6 @@
 ﻿using Manager_Request.Data.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,9 +22,6 @@ namespace Manager_Request.Data.Entities
         [StringLength(255)]
         public string Note { get; set; }
 
-        //Note for user
-        [StringLength(255)]
-        public string NoteUser { get; set; }
 
         public int Quantity { get; set; }
 
@@ -58,6 +56,9 @@ namespace Manager_Request.Data.Entities
 
         [ForeignKey(nameof(ReceiverId))]
         public virtual AppUser AppUser { get; set; }
+
+
+        public virtual ICollection<NoteTask> NoteTasks{ get; set; }
     }
 
 }

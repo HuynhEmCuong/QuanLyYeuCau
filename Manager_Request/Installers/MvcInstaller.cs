@@ -33,15 +33,6 @@ namespace Manager_Request.Installers
                     .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                     .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-                   
-
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IMapper>(sp =>
-            {
-                return new Mapper(AutoMapperConfig.RegisterMappings());
-            });
-            services.AddSingleton(AutoMapperConfig.RegisterMappings());
-
             //Swagger
             services.AddSwaggerGen(x =>
             {

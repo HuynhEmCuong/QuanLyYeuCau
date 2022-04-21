@@ -15,6 +15,8 @@ namespace Manager_Request.Installers
             services.AddScoped<IRepository<RequestType>, EFRepository<RequestType>>();
             services.AddScoped<IRepository<Department>, EFRepository<Department>>();
             services.AddScoped<IRepository<EmailLog>, EFRepository<EmailLog>>();
+
+            services.AddScoped<IRepository<NoteTask>, EFRepository<NoteTask>>();
         }
     }
 }

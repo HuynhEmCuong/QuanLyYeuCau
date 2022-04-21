@@ -76,5 +76,14 @@ namespace Manager_Request.Controllers.Student
         {
             return Ok(await _service.CheckTaskOfUser(userId, taskId));
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> AutoSendMail()
+        {
+            await _service.AutoSendMailNotifiTask();
+            return NotFound();
+        }
+
     }
 }

@@ -38,6 +38,8 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> UpdateNoteUser(StudentTaskViewModel model);
 
+        Task AutoSendMailNotifiTask();
+
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
     {
@@ -78,7 +80,11 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<StudentTaskViewModel> GetTaskInclude(int id)
         {
-            var query = await _repository.FindAll(x => x.Id == id).Include(x => x.AppUser).Include(x => x.RequestType).Include(x => x.Student).FirstOrDefaultAsync();
+            var query = await _repository.FindAll(x => x.Id == id)
+                .Include(x => x.AppUser).Include(x => x.RequestType)
+                .Include(x => x.Student)
+                .Include(x => x.NoteTasks).ThenInclude(z => z.UserNote)
+                .FirstOrDefaultAsync();
             return _mapper.Map<StudentTaskViewModel>(query);
         }
 
@@ -109,14 +115,15 @@ namespace Manager_Request.Application.Services.Students
         {
             int userId = _contextAccessor.HttpContext.User.GetUserId();
             var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId); ;
-
+            //var repoTest = _repository.FindAll(x => x.Id == 3, x=> x.AppUser, x=> x.RequestType  ) ;
             switch (model.Status)
             {
                 case RequestStatus.Doing:
                     model.AssignDate = DateTime.Now;
                     DateTime valueTime = model.AssignDate.Value;
                     model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
-                    await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType, userId, model.IntendTime);
+                    await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
+                    await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
                     break;
                 case RequestStatus.Complete:
                     model.FinishDate = DateTime.Now;
@@ -271,6 +278,24 @@ namespace Manager_Request.Application.Services.Students
             return operationResult;
         }
 
+        public async Task AutoSendMailNotifiTask()
+        {
+            //Ngày hôm nay
+            DateTime timeNow = DateTime.Now;
+
+            //Query các record có trạng thái đang xử lý và ngày dự kiến hoàn thành
+            var listTask = await _repository.FindAll(x => x.Status == RequestStatus.Doing
+            && x.IntendTime.Value.Day - timeNow.Day <= 1).Include(x => x.RequestType).ToListAsync();
+
+            //Send mail cho tất cả 
+            foreach (var item in listTask)
+            {
+                await SendMailAssign(item.ReceiverId.ToInt(), item.RequestType.Description, 1, item.IntendTime);
+            }
+
+        }
+
+
         //Function Private
         private async Task<AppUserViewModel> GetUser(string id)
         {
@@ -285,19 +310,21 @@ namespace Manager_Request.Application.Services.Students
             string content = "Xin chào Admin, \n" +
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + ",\n" +
                  "Loại công việc: " + request.Description;
-
             SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
 
         }
 
-        private async Task SendMailAssign(int receiverId, RequestTypeViewModel requestType, int userId, DateTime? IntendTime)
+        private async Task SendMailAssign(int receiverId, string requestTypeDesc, int userId, DateTime? intendTime)
         {
             var user = await _userSv.FindByIdAsync(receiverId);
 
-            string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
+            string content = $"Xin chào Anh/Chị: {user.Name}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
                 $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu. {Environment.NewLine}" +
-                $"Công việc: {requestType.Description} {Environment.NewLine}." +
-                $"Thời gian dự kiến hoàn thành là: {IntendTime.ToString("dd/MM/yyyy")}";
+                $"Công việc: {requestTypeDesc}.{Environment.NewLine}" +
+                $"Thời gian dự kiến hoàn thành là: {intendTime.ToString("dd/MM/yyyy")}. {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,"; ;
             SendMail(user.Email, userId, content, "Thông báo công việc", false);
         }
 
@@ -307,12 +334,12 @@ namespace Manager_Request.Application.Services.Students
             //string folderRoot = _env.WebRootPath;
             //string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
 
-            string content = $"Chào em {student.FullName} {Environment.NewLine}," +
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
                 $"{Environment.NewLine}" +
-                $"Em vui lòng tải file {requestType.Description} tại: aaoportal.eiu.edu.vn {Environment.NewLine}" +
-                $"Hoặc em có thể đến Trường để nhận bản giấy các ngày từ thứ 2 đến thứ 6 (vào giờ hành chính). {Environment.NewLine}" +
+                $"Yêu cầu xin {requestType.Description} tại aaoportal.eiu.edu.vn đã được xử lý. {Environment.NewLine}" +
+                $"Em có thể đến Phòng Dịch vụ Đào tạo (101.B5) để nhận bản giấy vào các ngày từ thứ 2 đến thứ 6 (vào giờ hành chính). {Environment.NewLine}" +
                 $"{Environment.NewLine}" +
-                $"Thân.";
+                $"Thân,";
 
             SendMail(student.Email, userId, content, $"Thông báo trả kết quả {requestType.Description}", false);
 
@@ -322,8 +349,22 @@ namespace Manager_Request.Application.Services.Students
         {
             var student = await _studentSv.FindByIdAsync(studentId);
 
-            string content = $"Xin chào em : {student.FullName} {Environment.NewLine}" +
-                $"Hiện tại yêu cầu xin {requestType.Description} của em đã bị hủy. Nếu em cần hỗ trợ thêm, em có thể liên hệ PĐT vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé.{Environment.NewLine}" +
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Hiện tại yêu cầu xin {requestType.Description} của em đã bị hủy. Nếu em cần hỗ trợ thêm, em có thể liên hệ Phòng dịch vụ Đào tạo (101.B5) vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé.{Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,";
+
+            SendMail(student.Email, userId, content, "Thông báo công việc", false);
+        }
+
+        private async Task SendMailStudentAssign(int studentId, string requestTypeDesc, DateTime? intendTime, int userId)
+        {
+            var student = await _studentSv.FindByIdAsync(studentId);
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Hiện tại yêu cầu xin {requestTypeDesc} của em đang được xử lý. {Environment.NewLine}" +
+                $"Thời gian dự kiến hoàn thành là: {intendTime.ToString("dd/MM/yyyy")}. {Environment.NewLine}" +
                 $"{Environment.NewLine}" +
                 $"Thân,";
 
@@ -371,7 +412,6 @@ namespace Manager_Request.Application.Services.Students
 
             return checkSend;
         }
-
 
 
     }
