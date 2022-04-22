@@ -20,7 +20,6 @@ namespace Manager_Request.Controllers.NoteTasks
 
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> AddAsync([FromBody] NoteTaskViewModel model)
         {
             return Ok(await _service.AddAsync(model));
