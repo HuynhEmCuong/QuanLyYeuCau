@@ -7,6 +7,7 @@ using Manager_Request.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Manager_Request.Application.Services.NoteTasks
 {
@@ -28,6 +29,11 @@ namespace Manager_Request.Application.Services.NoteTasks
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configMapper = configMapper;
+        }
+
+        public override Task<OperationResult> AddAsync(NoteTaskViewModel model)
+        {
+            return base.AddAsync(model);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Manager_Request.Installers
             services.AddSingleton<SendMailNotifiUserJob>();
             services.AddSingleton(new JobSchedule(
                     jobType: typeof(SendMailNotifiUserJob),
-                    cronExpression: "0 0/15 * ? * 1-5")); // mỗi 15giay
+                    cronExpression: "0 0/15 * ? * 1-6")); // mỗi 15giay
 
             //services.AddSingleton(new JobSchedule(
             //       jobType: typeof(SendMailNotifiUserJob),
