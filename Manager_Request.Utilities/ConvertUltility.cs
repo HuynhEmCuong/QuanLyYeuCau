@@ -301,7 +301,27 @@ namespace Manager_Request.Ultilities
                                     out result);
             return result;
         }
+        /// <summary>
+        /// Chuyển value thành datetime với format được cung cấp trong file excel
+        /// Để không nhập lộn ngày và tháng vào database
+        /// </summary>
+        /// <param name="value"> this object</param>
+        /// <param name="format">format của datetime object đầu vào. Vd "dd/MM/yyyy"</param>
+        /// <returns>Datetime with format</returns>
+        public static DateTime ToDateTimeWithFormat(this object value,string format)
+        {
+            if (value == null || value.ToString() == string.Empty || value.ToString() == " ")
+                return DateTime.MinValue;
 
+            DateTime result = DateTime.MinValue;
+           
+            DateTime.TryParseExact(value.ToString(), format,
+                                    //new CultureInfo("en-US"),//Lấy văn hóa của Mỹ
+                                    CultureInfo.InvariantCulture,//Không phụ thuộc văn hóa máy tính
+                                    DateTimeStyles.None,
+                                    out result);
+            return result;
+        }
         public static string ToJsonString(this object value)
         {
             if (value == null)

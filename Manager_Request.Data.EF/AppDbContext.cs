@@ -32,6 +32,8 @@ namespace QLHB.Data.EF
         public DbSet<StudentTask> StudentTasks { get; set; }
         public DbSet<RequestType> RequestTypes { get; set; }
 
+        public DbSet<NoteTask> NoteTasks{ get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<IdentityUserClaim<int>>().ToTable("AppUserClaims").HasKey(x => x.Id);

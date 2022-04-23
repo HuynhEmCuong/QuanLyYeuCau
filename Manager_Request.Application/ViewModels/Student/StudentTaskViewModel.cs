@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Manager_Request.Application.ViewModels
 {
-   public class StudentTaskViewModel
+    public class StudentTaskViewModel
     {
         public int Id { get; set; }
 
@@ -26,11 +26,17 @@ namespace Manager_Request.Application.ViewModels
 
         public DateTime? AssignDate { get; set; }
 
+        public DateTime? IntendTime { get; set; }
+
         public RequestStatus Status { get; set; }
 
         public string FileName { get; set; }
 
         public string FilePath { get; set; }
+
+        public string FileNameStudent { get; set; }
+
+        public string FilePathStudent { get; set; }
 
         public DateTime? CreateDate { get; set; }
 
@@ -41,5 +47,7 @@ namespace Manager_Request.Application.ViewModels
         public virtual StudentViewModel Student { get; set; }
 
         public virtual AppUserViewModel AppUser { get; set; }
+
+        public virtual ICollection<NoteTask> NoteTasks { get; set; }
     }
 }

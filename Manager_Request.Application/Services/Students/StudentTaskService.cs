@@ -17,15 +17,11 @@ using Manager_Request.Ultilities;
 using Manager_Request.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QLHB.Data.EF;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Manager_Request.Application.Services.Students
@@ -40,6 +36,10 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> CheckTaskOfUser(int userId, int taskId);
 
+        Task<OperationResult> UpdateNoteUser(StudentTaskViewModel model);
+
+        Task AutoSendMailNotifiTask();
+
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
     {
@@ -53,10 +53,10 @@ namespace Manager_Request.Application.Services.Students
         private readonly IUserService _userSv;
         private OperationResult operationResult;
         private readonly MailOptions _mail;
-        private IHostingEnvironment _env;
+
         public readonly IHttpContextAccessor _contextAccessor;
 
-        public StudentTaskService(IHttpContextAccessor contextAccessor,IHostingEnvironment env, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
+        public StudentTaskService(IHttpContextAccessor contextAccessor, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
             IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail)
             : base(repository, unitOfWork, mapper, configMapper)
         {
@@ -69,7 +69,6 @@ namespace Manager_Request.Application.Services.Students
             _requestTypeSv = requestTypeSv;
             _studentSv = studentSv;
             _userSv = userSv;
-            _env = env;
             _contextAccessor = contextAccessor;
         }
 
@@ -81,7 +80,12 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<StudentTaskViewModel> GetTaskInclude(int id)
         {
-            var query = await _repository.FindAll(x => x.Id == id).Include(x => x.AppUser).Include(x => x.RequestType).Include(x => x.Student).FirstOrDefaultAsync();
+           
+            var query = await _repository.FindAll(x => x.Id == id)
+                .Include(x => x.AppUser).Include(x => x.RequestType)
+                .Include(x => x.Student)
+                .Include(x => x.NoteTasks).ThenInclude(z => z.UserNote)
+                .FirstOrDefaultAsync();
             return _mapper.Map<StudentTaskViewModel>(query);
         }
 
@@ -110,18 +114,31 @@ namespace Manager_Request.Application.Services.Students
 
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {
-            int  userId = _contextAccessor.HttpContext.User.GetUserId();
-            //Status ==2 
-            if (model.Status == RequestStatus.Doing)
+            int userId = _contextAccessor.HttpContext.User.GetUserId();
+            var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId); ;
+            //var repoTest = _repository.FindAll(x => x.Id == 3, x=> x.AppUser, x=> x.RequestType  ) ;
+            switch (model.Status)
             {
-                model.AssignDate = DateTime.Now;
-                await SendMailAssign(model.ReceiverId.ToInt(), model.RequestId, userId);
+                case RequestStatus.Doing:
+                    model.AssignDate = DateTime.Now;
+                    DateTime valueTime = model.AssignDate.Value;
+                    model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
+                    await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
+                    await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
+                    break;
+                case RequestStatus.Complete:
+                    model.FinishDate = DateTime.Now;
+                    await SendMailComplete(requestType, model.StudentId, userId);
+                    break;
+                case RequestStatus.Disabled:
+                    await SendMailDisabled(model.StudentId, requestType, userId);
+                    break;
+                default:
+                    model.FinishDate = DateTime.Now;
+                    await SendMailComplete(requestType, model.StudentId, userId);
+                    break;
             }
-            else  //Status ==3 
-            {
-                model.FinishDate = DateTime.Now;
-                await SendMailComplete(model.FilePath,model.StudentId, userId);
-            }
+
             var item = _mapper.Map<StudentTask>(model);
             try
             {
@@ -129,7 +146,7 @@ namespace Manager_Request.Application.Services.Students
                 await _unitOfWork.SaveChangeAsync();
                 var data = _mapper.Map<StudentTaskViewModel>(item);
                 data.AppUser = await GetUser(item.ReceiverId.ToString());
-                //data.RequestType = model.RequestType;
+                data.RequestType = requestType;
                 operationResult = new OperationResult()
                 {
                     StatusCode = StatusCode.Ok,
@@ -148,13 +165,13 @@ namespace Manager_Request.Application.Services.Students
         public async override Task<OperationResult> AddAsync(StudentTaskViewModel model)
         {
             var item = _mapper.Map<StudentTask>(model);
-            await SendMailAdmiss(model.RequestId, model.StudentId);
+
             try
             {
 
                 await _repository.AddAsync(item);
                 _unitOfWork.SaveChange();
-
+                await SendMailAdmiss(model.RequestId, model.StudentId);
                 operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,
@@ -218,7 +235,69 @@ namespace Manager_Request.Application.Services.Students
             return operationResult;
         }
 
+        public async Task<OperationResult> CheckTaskOfUser(int userId, int taskId)
+        {
+            var item = await _repository.FindSingleAsync(x => x.Id == taskId && x.ReceiverId == userId);
+            if (item != null)
+            {
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Success = true,
+                };
+            }
+            else
+            {
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Success = false,
+                };
+            }
+            return operationResult;
+        }
 
+        public async Task<OperationResult> UpdateNoteUser(StudentTaskViewModel model)
+        {
+            var item = _mapper.Map<StudentTask>(model);
+            try
+            {
+                _repository.Update(item);
+                await _unitOfWork.SaveChangeAsync();
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Message = MessageReponse.UpdateSuccess,
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
+
+        public async Task AutoSendMailNotifiTask()
+        {
+            //Ngày hôm nay
+            DateTime timeNow = DateTime.Now;
+
+            //Query các record có trạng thái đang xử lý và ngày dự kiến hoàn thành
+            var listTask = await _repository.FindAll(x => x.Status == RequestStatus.Doing
+            && x.IntendTime.Value.Day - timeNow.Day <= 1).Include(x => x.RequestType).ToListAsync();
+
+            //Send mail cho tất cả 
+            foreach (var item in listTask)
+            {
+                await SendMailAssign(item.ReceiverId.ToInt(), item.RequestType.Description, 1, item.IntendTime);
+            }
+
+        }
+
+
+        //Function Private
         private async Task<AppUserViewModel> GetUser(string id)
         {
             return await _userSv.FindByIdAsync(id);
@@ -229,40 +308,71 @@ namespace Manager_Request.Application.Services.Students
             var request = await _requestTypeSv.FindByIdAsync(requestId);
             var student = await _studentSv.FindByIdAsync(studentId);
 
-            string content = "Xin chào Admin \n" +
-                "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + "\n" +
+            string content = "Xin chào Admin, \n" +
+                "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + ",\n" +
                  "Loại công việc: " + request.Description;
-
-            await SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
+            SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
 
         }
 
-
-        private async Task SendMailAssign(int receiverId, int requestId,int userId)
+        private async Task SendMailAssign(int receiverId, string requestTypeDesc, int userId, DateTime? intendTime)
         {
             var user = await _userSv.FindByIdAsync(receiverId);
-            var request = await _requestTypeSv.FindByIdAsync(requestId);
-            string content = $"Xin chào Anh/Chị: {user.Name} {Environment.NewLine}" +
-                $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu {Environment.NewLine}" +
-                $"Công việc: {request.Description}";
-            await SendMail(user.Email, userId, content, "Thông báo công việc", false);
+
+            string content = $"Xin chào Anh/Chị: {user.Name}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Anh/Chị được giao một việc trên phần mềm Quản Lý Yêu Cầu. {Environment.NewLine}" +
+                $"Công việc: {requestTypeDesc}.{Environment.NewLine}" +
+                $"Thời gian dự kiến hoàn thành là: {intendTime.ToString("dd/MM/yyyy")}. {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,"; ;
+            SendMail(user.Email, userId, content, "Thông báo công việc", false);
         }
 
-        private async Task SendMailComplete(string urlFile, int studentId,int userId)
+        private async Task SendMailComplete(RequestTypeViewModel requestType, int studentId, int userId)
         {
             var student = await _studentSv.FindByIdAsync(studentId);
-            string folderRoot = _env.WebRootPath;
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
+            //string folderRoot = _env.WebRootPath;
+            //string pathFile = Path.Combine(Directory.GetCurrentDirectory(), folderRoot + "/" + urlFile);
 
-            string content = $"Chào em {student.FullName} {Environment.NewLine}" +
-                $"Em vui lòng tải file kết quả đính kèm. Em có thể đến PĐT để nhận bản giấy vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé. {Environment.NewLine}" +
-                $"Thân";
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Yêu cầu xin {requestType.Description} tại aaoportal.eiu.edu.vn đã được xử lý. {Environment.NewLine}" +
+                $"Em có thể đến Phòng Dịch vụ Đào tạo (101.B5) để nhận bản giấy vào các ngày từ thứ 2 đến thứ 6 (vào giờ hành chính). {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,";
 
-            await SendMail(student.Email, userId, content, "Thông báo trả yêu cầu", false, pathFile);
+            SendMail(student.Email, userId, content, $"Thông báo trả kết quả {requestType.Description}", false);
 
         }
-       
-        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false, string urlFile ="")
+
+        private async Task SendMailDisabled(int studentId, RequestTypeViewModel requestType, int userId)
+        {
+            var student = await _studentSv.FindByIdAsync(studentId);
+
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Hiện tại yêu cầu xin {requestType.Description} của em đã bị hủy. Nếu em cần hỗ trợ thêm, em có thể liên hệ Phòng dịch vụ Đào tạo (101.B5) vào giờ hành chính các ngày từ thứ 2 đến thứ 6 nhé.{Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,";
+
+            SendMail(student.Email, userId, content, "Thông báo công việc", false);
+        }
+
+        private async Task SendMailStudentAssign(int studentId, string requestTypeDesc, DateTime? intendTime, int userId)
+        {
+            var student = await _studentSv.FindByIdAsync(studentId);
+            string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Hiện tại yêu cầu xin {requestTypeDesc} của em đang được xử lý. {Environment.NewLine}" +
+                $"Thời gian dự kiến hoàn thành là: {intendTime.ToString("dd/MM/yyyy")}. {Environment.NewLine}" +
+                $"{Environment.NewLine}" +
+                $"Thân,";
+
+            SendMail(student.Email, userId, content, "Thông báo công việc", false);
+        }
+
+        private async Task<bool> SendMail(string email, int userId, string content, string subject, bool isBodyHtml = false, string urlFile = "")
         {
             MailUtility mail = new MailUtility();
             //mail.From = "admissions@eiu.edu.vn";
@@ -287,39 +397,23 @@ namespace Manager_Request.Application.Services.Students
                 Sender = userId,
             };
             if (checkSend)
-            {
                 mailLog.Status = EmailStatus.send;
-            }
             else
-            {
                 mailLog.Error = mail.Error.Message;
+            try
+            {
+                _dbcontext.EmailLogs.Add(mailLog);
+                _dbcontext.SaveChanges();
             }
-            await _dbcontext.EmailLogs.AddAsync(mailLog);
-            await _dbcontext.SaveChangesAsync();
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
             return checkSend;
         }
 
-        public async Task<OperationResult> CheckTaskOfUser(int userId, int taskId)
-        {
-            var item = await _repository.FindSingleAsync(x => x.Id ==taskId && x.ReceiverId ==userId);
-            if(item != null)
-            {
-                operationResult = new OperationResult()
-                {
-                    StatusCode = StatusCode.Ok,
-                    Success = true,
-                   
-                };
-            }else
-            {
-                operationResult = new OperationResult()
-                {
-                    StatusCode = StatusCode.Ok,
-                    Success = false,
-                };
 
-            }
-            return operationResult;
-        }
     }
 }

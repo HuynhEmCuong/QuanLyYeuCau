@@ -22,7 +22,6 @@ namespace Manager_Request.Ultilities
             //Ghi các giá trị lên lá thư
             mail.From = new MailAddress(from, displayName);
             mail.To.Add(to);
-            //mail.To.Add("admissions@eiu.edu.vn");
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = isBodyHtml;
@@ -31,13 +30,14 @@ namespace Manager_Request.Ultilities
             if (!urlFile.IsNullOrEmpty())
                 mail.Attachments.Add(new Attachment(urlFile));
 
-            smtpServer.Host = host;
-            smtpServer.Credentials = new NetworkCredential(from, password);
-            smtpServer.EnableSsl = enableSSL;
-            smtpServer.Port = port;
+         
 
             try
             {
+                smtpServer.Host = host;
+                smtpServer.Credentials = new NetworkCredential(from, password);
+                smtpServer.EnableSsl = enableSSL;
+                smtpServer.Port = port;
                 smtpServer.Send(mail);
                 return true;
             }

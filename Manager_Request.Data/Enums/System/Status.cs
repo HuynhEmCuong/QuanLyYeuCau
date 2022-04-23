@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Manager_Request.Data.Enums
 {
-    public enum RequestStatus
+    public enum Status
     {
-        Received =1,
-        Doing,
-        Complete,
-        Disabled
+        Active =1,
+        DeActive,
+       
+        
     }
 }

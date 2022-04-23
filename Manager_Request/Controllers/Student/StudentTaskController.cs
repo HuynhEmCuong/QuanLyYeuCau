@@ -59,6 +59,12 @@ namespace Manager_Request.Controllers.Student
             return Ok(await _service.UpdateAsync(data));
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateNoteAsync([FromBody] StudentTaskViewModel data)
+        {
+            return Ok(await _service.UpdateNoteUser(data));
+        }
+
         [HttpGet]
         public async Task<IActionResult> ReportTask()
         {
@@ -70,5 +76,14 @@ namespace Manager_Request.Controllers.Student
         {
             return Ok(await _service.CheckTaskOfUser(userId, taskId));
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> AutoSendMail()
+        {
+            await _service.AutoSendMailNotifiTask();
+            return NotFound();
+        }
+
     }
 }
