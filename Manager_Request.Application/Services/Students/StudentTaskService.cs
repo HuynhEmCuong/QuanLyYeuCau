@@ -38,7 +38,9 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> UpdateNoteUser(StudentTaskViewModel model);
 
-        Task AutoSendMailNotifiTask();
+        Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model);
+
+      Task AutoSendMailNotifiTask();
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -297,6 +299,23 @@ namespace Manager_Request.Application.Services.Students
         }
 
 
+        //Chuyển đổi công việc 
+        public Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model)
+        {
+            //Tìm công việc thay đổi
+            
+
+            //Tìm user được nhận việc
+
+            //Cập nhận lại công việc với id người nhận
+
+            //Gửi mail cho người 
+
+            //Trả ra thông tin của người được nhật về FE
+            throw new NotImplementedException();
+        }
+
+
         //Function Private
         private async Task<AppUserViewModel> GetUser(string id)
         {
@@ -414,6 +433,6 @@ namespace Manager_Request.Application.Services.Students
             return checkSend;
         }
 
-
+     
     }
 }
