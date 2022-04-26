@@ -40,7 +40,7 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model);
 
-      Task AutoSendMailNotifiTask();
+        Task AutoSendMailNotifiTask();
 
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
@@ -82,7 +82,7 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<StudentTaskViewModel> GetTaskInclude(int id)
         {
-           
+
             var query = await _repository.FindAll(x => x.Id == id)
                 .Include(x => x.AppUser).Include(x => x.RequestType)
                 .Include(x => x.Student)
@@ -300,19 +300,40 @@ namespace Manager_Request.Application.Services.Students
 
 
         //Chuyển đổi công việc 
-        public Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model)
+        public async Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model)
         {
-            //Tìm công việc thay đổi
-            
-
+            int userId = _contextAccessor.HttpContext.User.GetUserId();
             //Tìm user được nhận việc
+            var userReceiver = await _userSv.FindByIdAsync(model.ReceiverId);
+
+            //Tính toán thời gian nhận việc 
+            model.AssignDate = DateTime.Now;
+            DateTime valueTime = model.AssignDate.Value;
+            model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
+           
+            //Gửi mail cho người 
+            await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
 
             //Cập nhận lại công việc với id người nhận
-
-            //Gửi mail cho người 
-
-            //Trả ra thông tin của người được nhật về FE
-            throw new NotImplementedException();
+            var item = _mapper.Map<StudentTask>(model);
+            try
+            {
+                _repository.Update(item);
+                await _unitOfWork.SaveChangeAsync();
+                model.AppUser = userReceiver;
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Message = MessageReponse.UpdateSuccess,
+                    Success = true,
+                    Data = model
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
         }
 
 
@@ -433,6 +454,6 @@ namespace Manager_Request.Application.Services.Students
             return checkSend;
         }
 
-     
+
     }
 }
