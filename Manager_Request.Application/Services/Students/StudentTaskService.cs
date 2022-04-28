@@ -83,6 +83,7 @@ namespace Manager_Request.Application.Services.Students
         public async Task<StudentTaskViewModel> GetTaskInclude(int id)
         {
 
+
             var query = await _repository.FindAll(x => x.Id == id)
                 .Include(x => x.AppUser).Include(x => x.RequestType)
                 .Include(x => x.Student)
@@ -124,7 +125,7 @@ namespace Manager_Request.Application.Services.Students
                 case RequestStatus.Doing:
                     model.AssignDate = DateTime.Now;
                     DateTime valueTime = model.AssignDate.Value;
-                    model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
+                    model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day).AddDays(model.RequestType.ExecutionTime.ToDouble());//Tính thời gian hoàn thành
                     await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
                     await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
                     break;
@@ -309,8 +310,8 @@ namespace Manager_Request.Application.Services.Students
             //Tính toán thời gian nhận việc 
             model.AssignDate = DateTime.Now;
             DateTime valueTime = model.AssignDate.Value;
-            model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
-           
+            model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day).AddDays(model.RequestType.ExecutionTime.ToDouble());
+
             //Gửi mail cho người 
             await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
 
