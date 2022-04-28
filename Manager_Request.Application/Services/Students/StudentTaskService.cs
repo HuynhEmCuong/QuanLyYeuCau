@@ -289,16 +289,14 @@ namespace Manager_Request.Application.Services.Students
 
             //Query các record có trạng thái đang xử lý và ngày dự kiến hoàn thành
             var listTask = await _repository.FindAll(x => x.Status == RequestStatus.Doing
-            && x.IntendTime.Value.Day - timeNow.Day <= 1).Include(x => x.RequestType).ToListAsync();
+            && x.IntendTime.Value.DayOfYear - timeNow.DayOfYear <= 1).Include(x => x.RequestType).ToListAsync();
 
             //Send mail cho tất cả 
             foreach (var item in listTask)
             {
                 await SendMailAssign(item.ReceiverId.ToInt(), item.RequestType.Description, 1, item.IntendTime);
             }
-
         }
-
 
         //Chuyển đổi công việc 
         public async Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model)
