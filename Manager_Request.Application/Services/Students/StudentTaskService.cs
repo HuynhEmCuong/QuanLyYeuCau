@@ -350,7 +350,7 @@ namespace Manager_Request.Application.Services.Students
             string content = "Xin chào Admin, \n" +
                 "Bạn nhân được 1 yêu cầu  từ sinh viên " + student.FullName + " với mã số sinh viên " + student.StudentId + ",\n" +
                  "Loại công việc: " + request.Description;
-            SendMail("em.huynh@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
+            SendMail("phongdaotao@eiu.edu.vn", 1, content, "Thông báo yêu cầu", false);
 
         }
 
@@ -416,8 +416,10 @@ namespace Manager_Request.Application.Services.Students
             MailUtility mail = new MailUtility();
             //mail.From = "admissions@eiu.edu.vn";
             //mail.Password = "eiuao@300983";
-            mail.From = "huynhcuongem7597@gmail.com";
-            mail.Password = "cuongem7597";
+            //mail.From = "huynhcuongem7597@gmail.com";
+            //mail.Password = "cuongem7597";
+            mail.From = "phongdaotao@eiu.edu.vn";
+            mail.Password = "ducngopdt@30111981";
             mail.Port = _mail.Port.ToInt();
             mail.Host = _mail.Host;
             mail.EnableSSL = _mail.EnableSSl.ToBool();
