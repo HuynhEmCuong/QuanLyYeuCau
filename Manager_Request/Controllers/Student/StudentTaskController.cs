@@ -65,6 +65,12 @@ namespace Manager_Request.Controllers.Student
             return Ok(await _service.UpdateNoteUser(data));
         }
 
+        [HttpPut]
+        public async Task<IActionResult> ChangeTaskForUser([FromBody] StudentTaskViewModel data)
+        {
+            return Ok(await _service.ChangeTaskForUser(data));
+        }
+
         [HttpGet]
         public async Task<IActionResult> ReportTask()
         {

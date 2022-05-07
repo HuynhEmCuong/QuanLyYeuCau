@@ -38,6 +38,8 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> UpdateNoteUser(StudentTaskViewModel model);
 
+        Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model);
+
         Task AutoSendMailNotifiTask();
 
     }
@@ -80,7 +82,8 @@ namespace Manager_Request.Application.Services.Students
 
         public async Task<StudentTaskViewModel> GetTaskInclude(int id)
         {
-           
+
+
             var query = await _repository.FindAll(x => x.Id == id)
                 .Include(x => x.AppUser).Include(x => x.RequestType)
                 .Include(x => x.Student)
@@ -122,7 +125,7 @@ namespace Manager_Request.Application.Services.Students
                 case RequestStatus.Doing:
                     model.AssignDate = DateTime.Now;
                     DateTime valueTime = model.AssignDate.Value;
-                    model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day + model.RequestType.ExecutionTime ?? 0); //Tính thời gian hoàn thành
+                    model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day).AddDays(model.RequestType.ExecutionTime.ToDouble());//Tính thời gian hoàn thành
                     await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
                     await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
                     break;
@@ -286,14 +289,50 @@ namespace Manager_Request.Application.Services.Students
 
             //Query các record có trạng thái đang xử lý và ngày dự kiến hoàn thành
             var listTask = await _repository.FindAll(x => x.Status == RequestStatus.Doing
-            && x.IntendTime.Value.Day - timeNow.Day <= 1).Include(x => x.RequestType).ToListAsync();
+            && x.IntendTime.Value.DayOfYear - timeNow.DayOfYear <= 1).Include(x => x.RequestType).ToListAsync();
 
             //Send mail cho tất cả 
             foreach (var item in listTask)
             {
                 await SendMailAssign(item.ReceiverId.ToInt(), item.RequestType.Description, 1, item.IntendTime);
             }
+        }
 
+        //Chuyển đổi công việc 
+        public async Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model)
+        {
+            int userId = _contextAccessor.HttpContext.User.GetUserId();
+            //Tìm user được nhận việc
+            var userReceiver = await _userSv.FindByIdAsync(model.ReceiverId);
+
+            //Tính toán thời gian nhận việc 
+            model.AssignDate = DateTime.Now;
+            DateTime valueTime = model.AssignDate.Value;
+            model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day).AddDays(model.RequestType.ExecutionTime.ToDouble());
+
+            //Gửi mail cho người 
+            await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
+
+            //Cập nhận lại công việc với id người nhận
+            var item = _mapper.Map<StudentTask>(model);
+            try
+            {
+                _repository.Update(item);
+                await _unitOfWork.SaveChangeAsync();
+                model.AppUser = userReceiver;
+                operationResult = new OperationResult()
+                {
+                    StatusCode = StatusCode.Ok,
+                    Message = MessageReponse.UpdateSuccess,
+                    Success = true,
+                    Data = model
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
         }
 
 
