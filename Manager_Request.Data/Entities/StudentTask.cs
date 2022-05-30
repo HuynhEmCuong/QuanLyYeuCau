@@ -18,6 +18,7 @@ namespace Manager_Request.Data.Entities
         public int? ReceiverId { get; set; }
 
         public RequestStatus Status { get; set; }
+
         //Note for student
         [StringLength(255)]
         public string Note { get; set; }
