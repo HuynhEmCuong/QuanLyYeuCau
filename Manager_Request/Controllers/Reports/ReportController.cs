@@ -21,7 +21,14 @@ namespace Manager_Request.Controllers.Reports
         [AllowAnonymous]
         public async Task<IActionResult> GetReportUsers()
         {
-            return Ok( await _service.ReportUsers());
+            return Ok(await _service.ReportUsers());
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetReportTasks()
+        {
+            return Ok(await _service.ReportTask());
         }
     }
 }

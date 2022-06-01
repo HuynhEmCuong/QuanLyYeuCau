@@ -115,6 +115,8 @@ namespace Manager_Request.Application.Services.Students
             return data;
         }
 
+
+        //Hiện tại đang commnet gửi mail đi của sinh viên
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {
             int userId = _contextAccessor.HttpContext.User.GetUserId();
@@ -127,18 +129,18 @@ namespace Manager_Request.Application.Services.Students
                     DateTime valueTime = model.AssignDate.Value;
                     model.IntendTime = new DateTime(valueTime.Year, valueTime.Month, valueTime.Day).AddDays(model.RequestType.ExecutionTime.ToDouble());//Tính thời gian hoàn thành
                     await SendMailAssign(model.ReceiverId.ToInt(), model.RequestType.Description, userId, model.IntendTime);
-                    await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
+                    //await SendMailStudentAssign(model.StudentId, model.RequestType.Description, model.IntendTime, userId);
                     break;
                 case RequestStatus.Complete:
                     model.FinishDate = DateTime.Now;
-                    await SendMailComplete(requestType, model.StudentId, userId);
+                    //await SendMailComplete(requestType, model.StudentId, userId);
                     break;
                 case RequestStatus.Disabled:
-                    await SendMailDisabled(model.StudentId, requestType, userId);
+                    //await SendMailDisabled(model.StudentId, requestType, userId);
                     break;
                 default:
                     model.FinishDate = DateTime.Now;
-                    await SendMailComplete(requestType, model.StudentId, userId);
+                    //await SendMailComplete(requestType, model.StudentId, userId);
                     break;
             }
 
@@ -282,6 +284,7 @@ namespace Manager_Request.Application.Services.Students
             return operationResult;
         }
 
+        //Auto send mail task unfinished
         public async Task AutoSendMailNotifiTask()
         {
             //Ngày hôm nay
@@ -376,7 +379,7 @@ namespace Manager_Request.Application.Services.Students
 
             string content = $"Chào em {student.FullName}, {Environment.NewLine}" +
                 $"{Environment.NewLine}" +
-                $"Yêu cầu xin {requestType.Description} tại aaoportal.eiu.edu.vn đã được xử lý. {Environment.NewLine}" +
+                $"Yêu cầu xin {requestType.Description} tại oaaportal.eiu.edu.vn đã được xử lý. {Environment.NewLine}" +
                 $"Em có thể đến Phòng Dịch vụ Đào tạo (101.B5) để nhận bản giấy vào các ngày từ thứ 2 đến thứ 6 (vào giờ hành chính). {Environment.NewLine}" +
                 $"{Environment.NewLine}" +
                 $"Thân,";
@@ -416,10 +419,10 @@ namespace Manager_Request.Application.Services.Students
             MailUtility mail = new MailUtility();
             //mail.From = "admissions@eiu.edu.vn";
             //mail.Password = "eiuao@300983";
-            //mail.From = "huynhcuongem7597@gmail.com";
-            //mail.Password = "cuongem7597";
-            mail.From = "phongdaotao@eiu.edu.vn";
-            mail.Password = "ducngopdt@30111981";
+            mail.From = "huynhcuongem7597@gmail.com";
+            mail.Password = "cuongem7597";
+            //mail.From = "phongdaotao@eiu.edu.vn";
+            //mail.Password = "ducngopdt@30111981";
             mail.Port = _mail.Port.ToInt();
             mail.Host = _mail.Host;
             mail.EnableSSL = _mail.EnableSSl.ToBool();

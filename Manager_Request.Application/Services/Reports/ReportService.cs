@@ -18,6 +18,8 @@ namespace Manager_Request.Application.Services.Reports
     public interface IReportService
     {
         Task<List<ReportUserViewModel>> ReportUsers();
+
+        Task<List<ReportTaskViewModel>> ReportTask();
     }
 
     public class ReportService : IReportService
@@ -37,6 +39,29 @@ namespace Manager_Request.Application.Services.Reports
             _userService = userService;
         }
 
+        //5 yêu cầu nhiều nhất trong tháng  
+        public async Task<List<ReportTaskViewModel>> ReportTask()
+        {
+            var query = _studentTaskRepository.FindAll().Include(x => x.RequestType);
+            int totalTask = await query.CountAsync();
+            var result = query.ToList().GroupBy(
+                x => x.RequestId
+                ).Select(
+
+                z =>
+                {
+                    //Khai báo biến trong select
+                    var totalTaskSefId = z.Count(y => y.RequestId == z.Key);
+                    return new ReportTaskViewModel
+                    {
+                        RequestName = z.First().RequestType.Name,
+                        Total = totalTaskSefId,
+                        PercentTotal = Math.Round(((double)(totalTaskSefId * 100) / (double)totalTask), 1)
+                    };
+                }).OrderByDescending(y => y.Total).Take(5).ToList();
+            return result;
+        }
+
 
         //Tổng số lượng công việc tính đến hiện tại
         public async Task<List<ReportUserViewModel>> ReportUsers()
@@ -51,7 +76,7 @@ namespace Manager_Request.Application.Services.Reports
             {
                 var taskUser = listTask.Where(x => x.ReceiverId == item.Id);
                 ReportUserViewModel data = new ReportUserViewModel(item.Id, item.Name, 0, 0, 0);
-                if (taskUser.Count() > 0)   
+                if (taskUser.Count() > 0)
                 {
                     data.TotalSuccess = taskUser.Count(z => z.Status == RequestStatus.Complete);
                     data.TotalProceesing = taskUser.Count(z => z.Status == RequestStatus.Doing);
@@ -62,8 +87,10 @@ namespace Manager_Request.Application.Services.Reports
             return result;
         }
 
-        //Tổng số  yêu cầu nhiều nhất trong tháng lấy 5 
 
-        
+
+
+
+
     }
 }
