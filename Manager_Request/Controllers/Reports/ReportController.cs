@@ -26,7 +26,14 @@ namespace Manager_Request.Controllers.Reports
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetReportTasks()
+        public async Task<IActionResult> GetReportRequest()
+        {
+            return Ok(await _service.ReportRequest());
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReportTask()
         {
             return Ok(await _service.ReportTask());
         }

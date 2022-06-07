@@ -71,11 +71,7 @@ namespace Manager_Request.Controllers.Student
             return Ok(await _service.ChangeTaskForUser(data));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ReportTask()
-        {
-            return Ok(await _service.ReportTask());
-        }
+        
 
         [HttpGet]
         public async Task<IActionResult> CheckTaskOfUser(int userId, int taskId)

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Manager_Request.Application.ViewModels.Reports
 {
-    public class ReportTaskViewModel
+    public class ReportRequestViewModel
     {
 
         public string RequestName { get; set; }

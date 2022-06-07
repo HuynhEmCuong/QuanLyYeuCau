@@ -32,7 +32,7 @@ namespace Manager_Request.Application.Services.Students
 
         Task<StudentTaskViewModel> GetTaskInclude(int id);
 
-        Task<StudentTaskReportViewModel> ReportTask();
+     
 
         Task<OperationResult> CheckTaskOfUser(int userId, int taskId);
 
@@ -98,22 +98,7 @@ namespace Manager_Request.Application.Services.Students
             return await DataSourceLoader.LoadAsync(query, loadOptions);
         }
 
-        public async Task<StudentTaskReportViewModel> ReportTask()
-        {
-            var query = _repository.FindAll();
-
-            DateTime startDateTime = DateTime.Today; //Today at 00:00:00
-            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
-
-            StudentTaskReportViewModel data = new StudentTaskReportViewModel();
-            data.Received = await query.CountAsync(x => x.Status == RequestStatus.Received);
-            data.ReceivedInDay = await query.Where(x => x.CreateDate >= startDateTime && x.CreateDate <= endDateTime).CountAsync(x => x.Status == RequestStatus.Received);
-            data.Doing = await query.CountAsync(x => x.Status == RequestStatus.Doing);
-            data.Complete = await query.CountAsync(x => x.Status == RequestStatus.Complete);
-            data.Disbaled = await query.CountAsync(x => x.Status == RequestStatus.Disabled);
-
-            return data;
-        }
+      
 
 
         //Hiện tại đang commnet gửi mail đi của sinh viên

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Manager_Request.Application.Services.System;
 using Manager_Request.Application.ViewModels.Reports;
+using Manager_Request.Application.ViewModels.Student;
 using Manager_Request.Data.EF.Interface;
 using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
@@ -19,7 +20,8 @@ namespace Manager_Request.Application.Services.Reports
     {
         Task<List<ReportUserViewModel>> ReportUsers();
 
-        Task<List<ReportTaskViewModel>> ReportTask();
+        Task<List<ReportRequestViewModel>> ReportRequest();
+        Task<StudentTaskReportViewModel> ReportTask();
     }
 
     public class ReportService : IReportService
@@ -39,8 +41,27 @@ namespace Manager_Request.Application.Services.Reports
             _userService = userService;
         }
 
-        //5 yêu cầu nhiều nhất trong tháng  
-        public async Task<List<ReportTaskViewModel>> ReportTask()
+
+        public async Task<StudentTaskReportViewModel> ReportTask()
+        {
+            var query = _studentTaskRepository.FindAll();
+
+            DateTime startDateTime = DateTime.Today; //Today at 00:00:00
+            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
+
+            StudentTaskReportViewModel data = new StudentTaskReportViewModel();
+            data.Received = await query.CountAsync(x => x.Status == RequestStatus.Received);
+            data.ReceivedInDay = await query.Where(x => x.CreateDate >= startDateTime && x.CreateDate <= endDateTime).CountAsync(x => x.Status == RequestStatus.Received);
+            data.Doing = await query.CountAsync(x => x.Status == RequestStatus.Doing);
+            data.Complete = await query.CountAsync(x => x.Status == RequestStatus.Complete);
+            data.Disbaled = await query.CountAsync(x => x.Status == RequestStatus.Disabled);
+
+            return data;
+        }
+
+
+        //5 yêu cầu nhiều nhất   cho dasboard
+        public async Task<List<ReportRequestViewModel>> ReportRequest()
         {
             var query = _studentTaskRepository.FindAll().Include(x => x.RequestType);
             int totalTask = await query.CountAsync();
@@ -52,7 +73,7 @@ namespace Manager_Request.Application.Services.Reports
                 {
                     //Khai báo biến trong select
                     var totalTaskSefId = z.Count(y => y.RequestId == z.Key);
-                    return new ReportTaskViewModel
+                    return new ReportRequestViewModel
                     {
                         RequestName = z.First().RequestType.Name,
                         Total = totalTaskSefId,
@@ -63,7 +84,7 @@ namespace Manager_Request.Application.Services.Reports
         }
 
 
-        //Tổng số lượng công việc tính đến hiện tại
+        //Tổng số lượng công việc tính đến hiện tại cho user
         public async Task<List<ReportUserViewModel>> ReportUsers()
         {
             //Số lượng công việc theo năm
@@ -86,6 +107,8 @@ namespace Manager_Request.Application.Services.Reports
             }
             return result;
         }
+
+
 
 
 
