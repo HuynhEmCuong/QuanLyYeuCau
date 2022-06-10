@@ -161,7 +161,7 @@ namespace Manager_Request.Application.Services.Students
 
                 await _repository.AddAsync(item);
                 _unitOfWork.SaveChange();
-                await SendMailAdmiss(model.RequestId, model.StudentId);
+                //await SendMailAdmiss(model.RequestId, model.StudentId);
                 operationResult = new OperationResult
                 {
                     StatusCode = StatusCode.Ok,

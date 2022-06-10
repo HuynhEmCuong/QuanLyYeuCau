@@ -42,6 +42,7 @@ namespace Manager_Request.Application.Services.Reports
         }
 
 
+        //Report quantity each day and total task 
         public async Task<StudentTaskReportViewModel> ReportTask()
         {
             var query = _studentTaskRepository.FindAll();
@@ -59,8 +60,7 @@ namespace Manager_Request.Application.Services.Reports
             return data;
         }
 
-
-        //5 yêu cầu nhiều nhất   cho dasboard
+        //5 yêu cầu nhiều nhất cho dasboard
         public async Task<List<ReportRequestViewModel>> ReportRequest()
         {
             var query = _studentTaskRepository.FindAll().Include(x => x.RequestType);
@@ -68,7 +68,6 @@ namespace Manager_Request.Application.Services.Reports
             var result = query.ToList().GroupBy(
                 x => x.RequestId
                 ).Select(
-
                 z =>
                 {
                     //Khai báo biến trong select
@@ -89,31 +88,31 @@ namespace Manager_Request.Application.Services.Reports
         {
             //Số lượng công việc theo năm
             //Số lượng công việc theo tháng
+            //Ngày hôm nay
+            DateTime timeNow = DateTime.Now;
 
             var listUser = await _userService.GetAllAsync();
             var listTask = _studentTaskRepository.FindAll();
             var result = new List<ReportUserViewModel>();
             foreach (var item in listUser)
             {
-                var taskUser = listTask.Where(x => x.ReceiverId == item.Id);
-                ReportUserViewModel data = new ReportUserViewModel(item.Id, item.Name, 0, 0, 0);
-                if (taskUser.Count() > 0)
+                var taskUser = listTask.Where(x => x.ReceiverId == item.Id && x.Status != RequestStatus.Disabled);
+                ReportUserViewModel data = new ReportUserViewModel(item.Id, item.Name);
+                int taskOfUserCount = taskUser.Count();
+                if (taskOfUserCount > 0)
                 {
                     data.TotalSuccess = taskUser.Count(z => z.Status == RequestStatus.Complete);
                     data.TotalProceesing = taskUser.Count(z => z.Status == RequestStatus.Doing);
-                    data.TotalLate = taskUser.Count(x => x.FinishDate.Value.DayOfYear - x.IntendTime.Value.DayOfYear > 1);
+                    //Nếu ngày kết thúc bằng null => Doing === thời gian dự kiến - hiện tại  < 1 ==> Trễ
+                    // Ngược lại ngày kết thúc - ngày hoàn thành >1 ==> Trễ
+                    data.TotalLate = taskUser.Count(x => (x.FinishDate.Value == null ? (x.IntendTime.Value.DayOfYear - timeNow.DayOfYear < 1) : (x.FinishDate.Value.DayOfYear - x.IntendTime.Value.DayOfYear > 1))
+                    && x.Status != RequestStatus.Disabled);
+                    data.Total = taskOfUserCount;
                 }
                 result.Add(data);
             }
             return result;
         }
-
-
-
-
-
-
-
 
     }
 }
