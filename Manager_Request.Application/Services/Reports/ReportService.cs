@@ -105,7 +105,9 @@ namespace Manager_Request.Application.Services.Reports
                     data.TotalProceesing = taskUser.Count(z => z.Status == RequestStatus.Doing);
                     //Nếu ngày kết thúc bằng null => Doing === thời gian dự kiến - hiện tại  < 1 ==> Trễ
                     // Ngược lại ngày kết thúc - ngày hoàn thành >1 ==> Trễ
-                    data.TotalLate = taskUser.Count(x => (x.FinishDate.Value == null ? (x.IntendTime.Value.DayOfYear - timeNow.DayOfYear < 1) : (x.FinishDate.Value.DayOfYear - x.IntendTime.Value.DayOfYear > 1))
+                    data.TotalLate = taskUser.Count(x => (x.FinishDate.Value == null ?
+                                                         (x.IntendTime.Value.DayOfYear - timeNow.DayOfYear < 1) :
+                                                         (x.FinishDate.Value.DayOfYear - x.IntendTime.Value.DayOfYear > 1))
                     && x.Status != RequestStatus.Disabled);
                     data.Total = taskOfUserCount;
                 }
