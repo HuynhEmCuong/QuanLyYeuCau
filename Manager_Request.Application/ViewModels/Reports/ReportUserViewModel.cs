@@ -11,13 +11,16 @@ namespace Manager_Request.Application.ViewModels.Reports
             
         }
 
-        public ReportUserViewModel(int userId, string userName, double totalSuccess =0, double totalProceesing =0, double totalLate=0,double total=0)
+        public ReportUserViewModel(int userId, string userName, double totalSuccess =0, double totalProceesing =0, double totalDisable=0,double total=0,
+            double totalProceesingLate =0)
         {
             UserId = userId;
             UserName = userName;
             TotalSuccess = totalSuccess;
+            TotalDisable = totalDisable;
+
             TotalProceesing = totalProceesing;
-            TotalLate = totalLate;
+            TotalProceesingLate = totalProceesingLate;
             Total = total;
         }
 
@@ -38,7 +41,8 @@ namespace Manager_Request.Application.ViewModels.Reports
         public double TotalProceesingLate { get; set; }
 
         #endregion
-        public double TotalLate { get; set; }
         public double  Total { get; set; }
+
+        public double TotalDisable { get; set; }
     }
 }
