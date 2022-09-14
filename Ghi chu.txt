@@ -1,0 +1,4 @@
+ ==Docker-compose ===
+Tag : v1.4 là phiên bản test cho app mobie Db QuanLyYeuCau-Test (test)
+
+Tag :latest là phiên bản chạy chính (product)
