@@ -1,6 +1,8 @@
 ﻿using Manager_Request.Application.Configuration;
+using Manager_Request.Application.Dtos.Student;
 using Manager_Request.Application.Services.Students;
 using Manager_Request.Application.ViewModels;
+using Manager_Request.Application.ViewModels.Student;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,6 +30,15 @@ namespace Manager_Request.Controllers.Student
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllByStudentId(int id) => Ok(await _service.GetListTaskByStudentId(id));
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllByStudentEmail([FromBody] StudentTaskMobiParmsDtos model) => Ok(await _service.GetListTaskByEmail(model));
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddUserTaskFromMobi([FromForm] StudentTaskMobiViewModel data) => Ok(await _service.AddTaskFromMobie(data));
+
 
         [HttpGet]
         [AllowAnonymous]

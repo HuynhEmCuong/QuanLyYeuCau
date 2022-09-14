@@ -3,8 +3,10 @@ using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Manager_Request.Application.Configuration;
 using Manager_Request.Application.Const;
+using Manager_Request.Application.Dtos.Student;
 using Manager_Request.Application.Extensions;
 using Manager_Request.Application.Service;
+using Manager_Request.Application.Service.SystemService;
 using Manager_Request.Application.Services.Request;
 using Manager_Request.Application.Services.System;
 using Manager_Request.Application.ViewModels;
@@ -14,6 +16,7 @@ using Manager_Request.Data.EF.Interface;
 using Manager_Request.Data.Entities;
 using Manager_Request.Data.Enums;
 using Manager_Request.Ultilities;
+using Manager_Request.Utilities;
 using Manager_Request.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,9 +33,9 @@ namespace Manager_Request.Application.Services.Students
     {
         Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId);
 
+
         Task<StudentTaskViewModel> GetTaskInclude(int id);
 
-     
 
         Task<OperationResult> CheckTaskOfUser(int userId, int taskId);
 
@@ -40,8 +43,14 @@ namespace Manager_Request.Application.Services.Students
 
         Task<OperationResult> ChangeTaskForUser(StudentTaskViewModel model);
 
+
         Task AutoSendMailNotifiTask();
 
+        #region Use for MobieApp
+        Task<StudentTaskMobieResultViewModel> GetListTaskByEmail(StudentTaskMobiParmsDtos model);
+
+        Task<OperationResult> AddTaskFromMobie(StudentTaskMobiViewModel model);
+        #endregion
     }
     public class StudentTaskService : BaseService<StudentTask, StudentTaskViewModel>, IStudentTaskService
     {
@@ -56,10 +65,13 @@ namespace Manager_Request.Application.Services.Students
         private OperationResult operationResult;
         private readonly MailOptions _mail;
 
+        private readonly IFileService _fileSv;
+
         public readonly IHttpContextAccessor _contextAccessor;
 
         public StudentTaskService(IHttpContextAccessor contextAccessor, IRepository<StudentTask> repository, IUserService userSv, IStudentService studentSv, IRequestTypeService requestTypeSv, AppDbContext dbcontext,
-            IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail)
+            IUnitOfWork unitOfWork, IMapper mapper, MapperConfiguration configMapper, MailOptions mail,
+            IFileService fileSv)
             : base(repository, unitOfWork, mapper, configMapper)
         {
             _repository = repository;
@@ -72,11 +84,13 @@ namespace Manager_Request.Application.Services.Students
             _studentSv = studentSv;
             _userSv = userSv;
             _contextAccessor = contextAccessor;
+            _fileSv = fileSv;
         }
+
 
         public async Task<List<StudentTaskViewModel>> GetListTaskByStudentId(int studentId)
         {
-            var query = await _repository.FindAll(x => x.StudentId == studentId).Include(x => x.Student).Include(x => x.RequestType).OrderByDescending(x => x.CreateDate).AsNoTracking().ToListAsync();
+            var query = _repository.FindAll(x => x.StudentId == studentId).Include(x => x.Student).Include(x => x.RequestType).OrderByDescending(x => x.CreateDate).AsNoTracking();
             return _mapper.Map<List<StudentTaskViewModel>>(query);
         }
 
@@ -98,14 +112,12 @@ namespace Manager_Request.Application.Services.Students
             return await DataSourceLoader.LoadAsync(query, loadOptions);
         }
 
-      
-
 
         //Hiện tại đang commnet gửi mail đi của sinh viên
         public override async Task<OperationResult> UpdateAsync(StudentTaskViewModel model)
         {
             int userId = _contextAccessor.HttpContext.User.GetUserId();
-            var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId); ;
+            var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId); 
             //var repoTest = _repository.FindAll(x => x.Id == 3, x=> x.AppUser, x=> x.RequestType  ) ;
             switch (model.Status)
             {
@@ -323,7 +335,61 @@ namespace Manager_Request.Application.Services.Students
             return operationResult;
         }
 
+        #region For Mobie
+        public async Task<StudentTaskMobieResultViewModel> GetListTaskByEmail(StudentTaskMobiParmsDtos model)
+        {
+            //Get Student by Email
+            var studentInfo = await _studentSv.GetStudentByEmail(model.Email);
 
+            //Get Data By Email 
+            var query = _repository.FindAll().Include(x => x.Student).Include(x => x.RequestType).Where(x => x.Student.Email == model.Email).OrderByDescending(x => x.CreateDate).AsNoTracking();
+            var dataPage = await query.ToPaginationAsync(model.Page, model.PageSize);
+
+            return new StudentTaskMobieResultViewModel()
+            {
+                PageInfo = dataPage,
+                StudentInfo = studentInfo
+            };
+            //return dataPage;
+
+        }
+
+        public async Task<OperationResult> AddTaskFromMobie(StudentTaskMobiViewModel model)
+        {
+            //Get Info Request Type 
+            var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId);
+
+            //Upfile server
+            var resultUpFile = await _fileSv.UploadFileStudent(model.File, requestType.Description);
+            model.FileNameStudent = resultUpFile.FileResponse.FileLocalName;
+            model.FilePathStudent= resultUpFile.FileResponse.FileFullPath;
+
+            //mapper data
+            var item = _mapper.Map<StudentTask>(model);
+            try
+            {
+
+                await _repository.AddAsync(item);
+                _unitOfWork.SaveChange();
+                //await SendMailAdmiss(model.RequestId, model.StudentId);
+                operationResult = new OperationResult
+                {
+                    StatusCode = StatusCode.Ok,
+                    Message = MessageReponse.AddSuccess,
+                    Success = true,
+                    Data = item
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
+
+        #endregion
+
+        #region Function Private
         //Function Private
         private async Task<AppUserViewModel> GetUser(string id)
         {
@@ -443,6 +509,8 @@ namespace Manager_Request.Application.Services.Students
             return checkSend;
         }
 
+      
 
+        #endregion
     }
 }

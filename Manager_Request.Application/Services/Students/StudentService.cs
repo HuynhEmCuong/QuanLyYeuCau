@@ -26,6 +26,8 @@ namespace Manager_Request.Application.Services.Students
         Task<OperationResult> ImportStudent(IFormFile file);
 
         Task<StudentViewModel> GetStudentByMSSV(string mssv);
+
+        Task<StudentViewModel> GetStudentByEmail(string email);
     }
 
     public class StudentService : BaseService<Student, StudentViewModel>, IStudentService
@@ -180,6 +182,13 @@ namespace Manager_Request.Application.Services.Students
         public async Task<StudentViewModel> GetStudentByMSSV(string mssv)
         {
             var item = await _repository.FindSingleAsync(x => x.StudentId == mssv);
+            var result = _mapper.Map<StudentViewModel>(item);
+            return result;
+        }
+
+        public async Task<StudentViewModel> GetStudentByEmail(string email)
+        {
+            var item = await _repository.FindSingleAsync(x => x.Email == email.Trim());
             var result = _mapper.Map<StudentViewModel>(item);
             return result;
         }

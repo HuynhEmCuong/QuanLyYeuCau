@@ -1,4 +1,5 @@
-﻿using Manager_Request.Application.Services.Reports;
+﻿using Manager_Request.Application.Dtos;
+using Manager_Request.Application.Services.Reports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,11 +18,11 @@ namespace Manager_Request.Controllers.Reports
             _service = service;
         }
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> GetReportUsers()
+        public async Task<IActionResult> GetReportUsers([FromBody] ParamsDateDto parms)
         {
-            return Ok(await _service.ReportUsers());
+            return Ok(await _service.ReportUsers(parms));
         }
 
         [HttpGet]

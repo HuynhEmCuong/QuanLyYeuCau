@@ -15,7 +15,7 @@ namespace Manager_Request.Application.AutoMapper
             CreateMap<StudentTaskViewModel, StudentTask>()
                 .ForMember(x => x.RequestType, opt => opt.Ignore())
                 .ForMember(x => x.NoteTasks, opt => opt.Ignore());
-            //CreateMap<StudentTaskViewModel, StudentTask>();
+            CreateMap<StudentTaskMobiViewModel, StudentTask>();
             CreateMap<RequestTypeViewModel, RequestType>();
             CreateMap<AppUserViewModel, AppUser>();
             CreateMap<DepartmentViewModel, Department>();

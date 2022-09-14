@@ -37,6 +37,7 @@ namespace Manager_Request.Application.Service.SystemService
         {
             return  RemoveFile(fileName, "wwwroot/FileUpload/FileStudent/");
         }
+      
         public async Task<OperationFileResult> UploadFileStudent(IFormFile file, string requestType)
         {
             return await UploadFile(file, requestType, "FileUpload/FileStudent/");
