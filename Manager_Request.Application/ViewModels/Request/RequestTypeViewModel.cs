@@ -21,6 +21,8 @@ namespace Manager_Request.Application.ViewModels
 
         public RequestTypeStatus StatusRequest { get; set; }
 
+        public RequestTypeUpload IsUpload { get; set; }
+
         public Status Status { get; set; }
 
         public int SortOrder { get; set; }

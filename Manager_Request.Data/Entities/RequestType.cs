@@ -26,6 +26,8 @@ namespace Manager_Request.Data.Entities
 
         public Status Status { get; set; }
 
+        public RequestTypeUpload IsUpload { get; set; }
+
         public RequestTypeStatus StatusRequest { get; set; }
 
         public int SortOrder { get; set; }

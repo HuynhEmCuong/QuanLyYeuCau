@@ -37,7 +37,7 @@ namespace Manager_Request.Controllers.Student
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> AddUserTaskFromMobi([FromForm] StudentTaskMobiViewModel data) => Ok(await _service.AddTaskFromMobie(data));
+        public async Task<IActionResult> AddTaskFromMobi([FromForm] StudentTaskMobiViewModel data) => Ok(await _service.AddTaskFromMobie(data));
 
 
         [HttpGet]

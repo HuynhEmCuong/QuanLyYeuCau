@@ -10,7 +10,7 @@ services:
   manager-request:
     hostname: manager-request
     container_name: manager-request
-    image: huynhcuongem75/manager-request:latest
+    image: huynhcuongem75/manager-request:v.14
     build: 
         context: ./
         dockerfile: ./Manager_Request/Dockerfile

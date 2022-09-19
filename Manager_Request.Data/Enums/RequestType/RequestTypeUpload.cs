@@ -4,11 +4,9 @@ using System.Text;
 
 namespace Manager_Request.Data.Enums.RequestType
 {
-    public enum RequestTypeStatus
+    public enum RequestTypeUpload
     {
-        Online,
-        Offline
+        NotUpload,
+        Upload
     }
-
-
 }

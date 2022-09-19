@@ -342,7 +342,7 @@ namespace Manager_Request.Application.Services.Students
             var studentInfo = await _studentSv.GetStudentByEmail(model.Email);
 
             //Get Data By Email 
-            var query = _repository.FindAll().Include(x => x.Student).Include(x => x.RequestType).Where(x => x.Student.Email == model.Email).OrderByDescending(x => x.CreateDate).AsNoTracking();
+            var query = _repository.FindAll().Include(x => x.RequestType).Where(x => x.Student.Email == model.Email).OrderByDescending(x => x.CreateDate).AsNoTracking();
             var dataPage = await query.ToPaginationAsync(model.Page, model.PageSize);
 
             return new StudentTaskMobieResultViewModel()
@@ -360,9 +360,12 @@ namespace Manager_Request.Application.Services.Students
             var requestType = await _requestTypeSv.FindByIdAsync(model.RequestId);
 
             //Upfile server
-            var resultUpFile = await _fileSv.UploadFileStudent(model.File, requestType.Description);
-            model.FileNameStudent = resultUpFile.FileResponse.FileLocalName;
-            model.FilePathStudent= resultUpFile.FileResponse.FileFullPath;
+            if(model.File != null)
+            {
+                var resultUpFile = await _fileSv.UploadFileStudent(model.File, requestType.Description);
+                model.FileNameStudent = resultUpFile.FileResponse.FileLocalName;
+                model.FilePathStudent = resultUpFile.FileResponse.FileFullPath;
+            }
 
             //mapper data
             var item = _mapper.Map<StudentTask>(model);
