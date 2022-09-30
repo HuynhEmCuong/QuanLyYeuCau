@@ -118,12 +118,19 @@ namespace QLHB.Data.EF
                 var builder = new DbContextOptionsBuilder<AppDbContext>();
 
 
-                IConfiguration configuration = new ConfigurationBuilder()
-                 .SetBasePath(Directory.GetCurrentDirectory())
-                 .AddJsonFile(@"appsettings.json").Build();
+                var connetionString = Environment.GetEnvironmentVariable("CONNECT_STRING_API");
 
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
-                builder.UseSqlServer(connectionString);
+                if (!connetionString.IsNullOrEmpty())
+                {
+                    IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(@"appsettings.json").Build();
+
+                    connetionString = configuration.GetConnectionString("DefaultConnection");
+                }
+
+               
+                builder.UseSqlServer(connetionString);
                 return new AppDbContext(builder.Options);
             }
         }
